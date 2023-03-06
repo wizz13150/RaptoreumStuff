@@ -10,9 +10,9 @@ Write-Warning "Starting the script to automatically apply a Raptoreum bootstrap,
 # Definition of variables
 
 # Path to the wallet folder to which the bootstrap should be applied. "$env:APPDATA\raptoreumcore" by default.
-$walletDirectory = "E:\Raptoreum\Wallet"
+$walletDirectory = "$env:APPDATA\raptoreumcore"
 # Path to the bootstrap.zip file
-$bootstrapZipPath = "E:\Raptoreum\bootstrap\bootstrap.zip"
+$bootstrapZipPath = "$env:APPDATA\raptoreumcore\bootstrap.zip"
 
 # Other fixed variables
 $walletProcessName = "raptoreum*"
