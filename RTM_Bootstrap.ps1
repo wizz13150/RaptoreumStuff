@@ -42,7 +42,7 @@ function Check-BootstrapZipChecksum {
         Write-CurrentTime; Write-Host " Local Checksum  : $($localChecksum)" -ForegroundColor Green
         Write-CurrentTime; Write-Host " Online Checksum : $($remoteChecksum)" -ForegroundColor Green
     } else {
-        Write-CurrentTime; Write-Host " Checksum verification failed. The bootstrap may have been modified." -ForegroundColor Yellow
+        Write-CurrentTime; Write-Host " Checksum verification failed. The bootstrap may have been modified, consider to delete it. Or the script may be outdated." -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Local Checksum  : $($localChecksum)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Online Checksum : $($remoteChecksum)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Stopping the script..." -ForegroundColor Red
@@ -130,7 +130,7 @@ foreach ($directory in @($blocksDirectory, $chainstateDirectory, $evodbDirectory
         $backupPath = Join-Path $backupDirectory "$(Split-Path $directory -Leaf)_$dateSuffix"
         Write-CurrentTime; Write-Host " $backupAction of directory $directory in progress..." -ForegroundColor Green
         if ($archiveAction -eq "a") {
-            Move-Item $directory $backupPath -Force -ErrorAction Stop
+            Move-Item $directory $backupPath -Force -ErrorAction Continue
         }
         #Remove-Item $directory -Recurse -Force -ErrorAction Stop
         Write-CurrentTime; Write-Host " The $directory directory has been $removeAction." -ForegroundColor Green
@@ -141,9 +141,9 @@ if (Test-Path $powcachePath) {
     $backupPath = Join-Path $backupDirectory "powcache_$dateSuffix.dat"
     Write-CurrentTime; Write-Host " Deleting the powcache.dat file in progress..." -ForegroundColor Green
     if ($archiveAction -eq "a") {
-        Copy-Item $powcachePath $backupPath -Force -ErrorAction Stop
+        Copy-Item $powcachePath $backupPath -Force -ErrorAction Continue
     }
-    Remove-Item $powcachePath -Force -ErrorAction Stop
+    Remove-Item $powcachePath -Force -ErrorAction Continue
     Write-CurrentTime; Write-Host " The powcache.dat file has been $removeAction." -ForegroundColor Green
 }
 
@@ -153,7 +153,10 @@ if (Test-Path $bootstrapZipPath) {
     $zipProgram = $null
     if (Test-Path (Join-Path $env:ProgramFiles "7-zip\7z.exe")) {
         $zipProgram = (Join-Path $env:ProgramFiles "7-zip\7z.exe")
-    }    
+    }
+    if (Test-Path (Join-Path ${Env:ProgramFiles(x86)} "7-Zip\7z.exe")) {
+        $zipProgram = (Join-Path ${Env:ProgramFiles(x86)} "7-zip\7z.exe")
+    }
     if ($zipProgram) {
         Write-CurrentTime; Write-Host " 7-Zip detected, using 7-Zip to extract the bootstrap. Faster..." -ForegroundColor Green
         & "$zipProgram" x "$bootstrapZipPath" -o"$walletDirectory" -y
