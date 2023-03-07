@@ -108,14 +108,15 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
-    Write-Host " Downloading the bootstrap from $Url"
-    Write-Progress -Activity "Downloading the bootstrap..." -Status " Downloading..." -PercentComplete 0
+    Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url"
+    #Write-Progress -Activity "Downloading the bootstrap..." -Status " Downloading..." -PercentComplete 0
     Invoke-WebRequest -Uri $Url -OutFile $FilePath -ErrorAction Stop
-    if ($LASTEXITCODE -eq 0) {
-        Write-Progress -Activity " Download of the bootstrap..." -Status " Download complete!" -PercentComplete 100
-    } else {
-        Write-Progress -Activity " Download of the bootstrap..." -Status " Download failed!" -PercentComplete 100
-    }
+    # Improve the download here - ToDo
+    #if ($LASTEXITCODE -eq 0) {
+        #Write-Progress -Activity " Download of the bootstrap..." -Status " Download complete!" -PercentComplete 100
+    #} else {
+        #Write-Progress -Activity " Download of the bootstrap..." -Status " Download failed!" -PercentComplete 100
+    #}
 }
 
 # Checking the current and the latest versions available
