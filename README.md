@@ -29,6 +29,7 @@ Enjoy.
 Screenshot :
 
 
-![image](https://user-images.githubusercontent.com/22177081/223547651-5afa43a9-c96d-4394-8e83-9d1cd498b064.png)
+![image](https://user-images.githubusercontent.com/22177081/223575225-5cdd7c15-5c67-458d-b6e3-c66b4598e4db.png)
+
 
 
