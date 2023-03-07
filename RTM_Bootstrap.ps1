@@ -1,11 +1,11 @@
-################################################
-### Script Bootstrap v1.3.17.02 Auto windows ###
-################################################
+############################################################
+### Script Bootstrap Auto to latest version, for windows ###
+############################################################
 
 # Allow to run the script - To Test
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
 
-Write-Warning "Starting the script to automatically apply a Raptoreum bootstrap, for v1.3.17.02"
+Write-Warning "Starting the script to automatically apply a Raptoreum bootstrap"
 
 # Definition of variables
 
@@ -33,9 +33,10 @@ function Write-CurrentTime {
 function Check-BootstrapZipChecksum {
     Write-CurrentTime; Write-Host " Checking checksum of the 'bootstrap.zip' file..." -ForegroundColor Green
     Write-CurrentTime; Write-Host " Source: https://checksums.raptoreum.com/checksums/bootstrap-checksums.txt" -ForegroundColor Green
-    $checksumsUrl = "https://checksums.raptoreum.com/checksums/bootstrap-checksums.txt"
-    $checksums = Invoke-WebRequest -Uri $checksumsUrl -UseBasicParsing
-    $remoteChecksum = ($checksums.Content.Split("`n") | Select-String -Pattern "v1.3.17.02/no-index/bootstrap.zip").ToString().Split(" ")[0].Trim()
+    #$checksumsUrl = "https://checksums.raptoreum.com/checksums/bootstrap-checksums.txt"
+    #$checksums = Invoke-WebRequest -Uri $checksumsUrl -UseBasicParsing
+    $remoteChecksum = ($checksums.Content.Split("`n") | Select-String -Pattern "v$latestVersion/no-index/bootstrap.zip").ToString().Split(" ")[0].Trim()
+    Write-CurrentTime; Write-Host " Checksum: $remoteChecksum" -ForegroundColor Green
     $localChecksum = (Get-FileHash -Path $bootstrapZipPath -Algorithm SHA256 | Select-Object -ExpandProperty Hash).ToLower()
     if ($localChecksum -eq $remoteChecksum) {
         Write-CurrentTime; Write-Host " Checksum verification successful. The bootstrap is authentic." -ForegroundColor Green
@@ -46,6 +47,52 @@ function Check-BootstrapZipChecksum {
         Write-CurrentTime; Write-Host " Local Checksum  : $($localChecksum)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Online Checksum : $($remoteChecksum)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Stopping the script..." -ForegroundColor Red
+        pause
+        exit
+    }
+}
+
+function Get-FileVersion {
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]$FilePath
+    )
+
+    $fileVersionInfo = Get-Item $FilePath | Get-ItemProperty | Select-Object -ExpandProperty VersionInfo
+    return $fileVersionInfo.ProductVersion
+}
+
+# Checking the current and the latest versions available
+# Check current version on the computer, if default folder
+$corePath = "$env:ProgramFiles\RaptoreumCore\raptoreum-qt.exe"
+if (Test-Path $corePath) {
+    $coreVersion = Get-FileVersion $corePath
+    Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : $coreVersion" -ForegroundColor Green
+}
+else {
+    Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : Not found" -ForegroundColor Yellow
+}
+
+# Get latest version number of RaptoreumCore available, from github
+$uri = "https://api.github.com/repos/Raptor3um/raptoreum/releases/latest"
+$response = Invoke-RestMethod -Uri $uri
+$latestVersion = $response.tag_name
+Write-CurrentTime; Write-Host " Last RaptoreumCore version available : $latestVersion" -ForegroundColor Green
+Write-CurrentTime; Write-Host " Download link: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
+
+# Get latest version number of the bootstrap available, from checksums
+$checksumsUrl = "https://checksums.raptoreum.com/checksums/bootstrap-checksums.txt"
+$checksums = Invoke-WebRequest -Uri $checksumsUrl -UseBasicParsing
+$bootstrapVersion = [regex]::Matches($checksums, '\d+\.\d+\.\d+\.\d+').Value | Select-Object -Last 1
+Write-CurrentTime; Write-Host " Last Bootstrap version available     : $bootstrapVersion" -ForegroundColor Green
+Write-CurrentTime; Write-Host " Download link: https://bootstrap.raptoreum.com/bootstraps/bootstrap.zip" -ForegroundColor Green
+
+# Ask is the wallet is correctly updated to the required version
+if (-not ($coreVersion -eq $latestVersion)) {
+    $answer = Read-Host "Have you updated RaptoreumCore to version $latestVersion? (y/n)"
+    if ($answer.ToLower() -ne "y") {
+        Write-CurrentTime; Write-Host " Please update RaptoreumCore to version $latestVersion and run the script again." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " Download link: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
         pause
         exit
     }
@@ -92,7 +139,7 @@ if (Test-Path $bootstrapZipPath) {
 # Check if the wallet process is running and kill it if it is
 $walletProcess = Get-Process -Name $walletProcessName -ErrorAction SilentlyContinue
 if ($walletProcess) {
-    Write-CurrentTime; Write-Host " Stopping $walletProcessName process..." -ForegroundColor Yellow
+    Write-CurrentTime; Write-Host " Stopping the running RaptoreumCore process..." -ForegroundColor Yellow
     Stop-Process $walletProcess.Id -Force
 } else {
     Write-CurrentTime; Write-Host " No RaptoreumCore process detected..." -ForegroundColor Green
