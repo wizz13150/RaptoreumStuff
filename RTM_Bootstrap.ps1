@@ -2,8 +2,8 @@
 ### Script Bootstrap Auto to latest version, for windows ###
 ############################################################
 
-# Allow to run the script - To Test
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
+# Allow to run the script on a restricted execution policy - To Do/Test
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
 
 Write-Warning "Starting the script to automatically apply a Raptoreum bootstrap"
 
