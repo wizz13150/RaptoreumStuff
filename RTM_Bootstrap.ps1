@@ -108,7 +108,7 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
-    Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url"
+    Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url" -ForegroundColor Green
     #Write-Progress -Activity "Downloading the bootstrap..." -Status " Downloading..." -PercentComplete 0
     Invoke-WebRequest -Uri $Url -OutFile $FilePath -ErrorAction Stop
     # Improve the download here - ToDo
