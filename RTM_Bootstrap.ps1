@@ -212,7 +212,6 @@ if (Test-Path $bootstrapZipPath) {
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     } else {
-        Write-CurrentTime; Write-Host " Downloading the bootstrap.zip file..." -ForegroundColor Green
         Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
         Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
     }
