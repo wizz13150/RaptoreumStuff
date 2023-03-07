@@ -4,7 +4,7 @@ Just run and answer the questions if you're using custom folders.
 
 -----------------------------------
 
-Check the latest versions of RaptoreumCore on github, the latest bootstrap, with links to download.
+Check the latest versions of RaptoreumCore on github, the latest bootstrap on bootstrap.raptoreum.com, with links to download.
 
 Will apply the last bootstrap (no index) available to your wallet, be sure to run the last RaptoreumCore release version. 
 
@@ -19,5 +19,6 @@ Enjoy.
 Screenshot :
 
 
+![image](https://user-images.githubusercontent.com/22177081/223547651-5afa43a9-c96d-4394-8e83-9d1cd498b064.png)
 
 
