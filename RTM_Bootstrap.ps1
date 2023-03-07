@@ -57,12 +57,12 @@ function Get-FileVersion {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
-
     $fileVersionInfo = Get-Item $FilePath | Get-ItemProperty | Select-Object -ExpandProperty VersionInfo
     return $fileVersionInfo.ProductVersion
 }
 
 # Checking the current and the latest versions available
+
 # Check current version on the computer, if default folder
 $corePath = "$env:ProgramFiles\RaptoreumCore\raptoreum-qt.exe"
 if (Test-Path $corePath) {
