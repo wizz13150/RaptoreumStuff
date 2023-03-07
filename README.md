@@ -12,7 +12,13 @@ Check the latest versions of RaptoreumCore on github, the latest bootstrap on bo
 
 Will apply the last bootstrap (no index) available to your wallet, be sure to run the last RaptoreumCore release version. 
 
-Detect if 7-Zip is on the computer, 30-50% faster.
+Use the default wallet location, or ask for a custom folder.
+
+Detect if 7-Zip is on the computer, +30% faster for the extraction.
+
+Detect your RaptoreumCore version, or ask for a custom folder.
+
+If you want to use your local bootstrap.zip, put it in your wallet folder.
 
 Take 10 min to complete, for me. (03/23)
 
