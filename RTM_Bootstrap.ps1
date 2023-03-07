@@ -70,33 +70,22 @@ function Check-BootstrapZip {
         [string]$bootstrapZipPath,
         [string]$bootstrapUrl
     )
-
     $localFile = Get-Item $bootstrapZipPath
     $remoteFile = Invoke-WebRequest -Uri $bootstrapUrl -Method Head
     $remoteLastModified = [datetime]::ParseExact($remoteFile.Headers.'Last-Modified', 'ddd, dd MMM yyyy HH:mm:ss \G\M\T', [System.Globalization.CultureInfo]::InvariantCulture)
     $remoteSize = $remoteFile.Headers.'Content-Length'
-
     if ($localFile.LastWriteTime -ge $remoteLastModified -and $localFile.Length -eq $remoteSize) {
-        Write-CurrentTime
-        Write-Host " The bootstrap.zip file is up to date." -ForegroundColor Green
-        Write-CurrentTime
-        Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Green
-        Write-CurrentTime
-        Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Green
-
+        Write-CurrentTime; Write-Host " The bootstrap.zip file is up to date." -ForegroundColor Green
+        Write-CurrentTime; Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Green
+        Write-CurrentTime; Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Green
         # Check checksum
         Check-BootstrapZipChecksum
     } 
     else {
-        Write-CurrentTime
-        Write-Host " Your bootstrap is not up to date or incomplete." -ForegroundColor Yellow
-        Write-CurrentTime
-        Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
-        Write-CurrentTime
-        Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Yellow
-
+        Write-CurrentTime; Write-Host " Your bootstrap is not up to date or incomplete." -ForegroundColor Yellow
+        Write-CurrentTime; Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
+        Write-CurrentTime; Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Yellow
         $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
-
         if ($confirmDownload -eq "n") {
             Write-CurrentTime
             Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
@@ -105,13 +94,11 @@ function Check-BootstrapZip {
             Write-CurrentTime
             Write-Host " Downloading the bootstrap.zip file..." -ForegroundColor Green
             Invoke-WebRequest -Uri $bootstrapUrl -OutFile $bootstrapZipPath -ErrorAction Stop
-
             # Check checksum
             Check-BootstrapZipChecksum
         }
     }
 }
-
 
 # Checking the current and the latest versions available
 # Check current version on the computer, if default folder
