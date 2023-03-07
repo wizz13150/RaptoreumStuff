@@ -10,13 +10,12 @@ Write-Warning "Starting the script to automatically apply a Raptoreum bootstrap"
 # Definition of variables
 
 # Path to the wallet folder to which the bootstrap should be applied. "$env:APPDATA\raptoreumcore" by default.
-$walletDirectory = "E:\Raptoreum\Wallet"
+$walletDirectory = "$env:APPDATA\raptoreumcore"
 # Path to the bootstrap.zip file
-$bootstrapZipPath = "E:\Raptoreum\bootstrap\bootstrap.zip"
+$bootstrapZipPath = "$env:APPDATA\raptoreumcore\bootstrap.zip"
 
 # Other fixed variables
 $walletProcessName = "raptoreum*"
-$backupDirectory = "$walletDirectory\BootstrapBackup"
 $dateSuffix = Get-Date -Format "ddMMyyyy"
 $bootstrapUrl = "https://bootstrap.raptoreum.com/bootstraps/bootstrap.zip"
 $blocksDirectory = "$walletDirectory\blocks"
@@ -61,7 +60,6 @@ function Get-FileVersion {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
-
     $fileVersionInfo = Get-Item $FilePath -ErrorAction SilentlyContinue| Get-ItemProperty | Select-Object -ExpandProperty VersionInfo
     return $fileVersionInfo.ProductVersion
 }
@@ -85,8 +83,7 @@ else {
         if ($dialog.SelectedPath) {
             $corePath = $dialog.SelectedPath + "\raptoreum-qt.exe"
             $coreVersion = Get-FileVersion $corePath
-
-            # Test if selected folder contain raptoreum-qt.exe
+            # Test if the selected folder contain raptoreum-qt.exe
             if (Test-Path "$corePath") {
                 Write-CurrentTime; Write-Host " raptoreum-qt.exe found..." -ForegroundColor Green
                 Write-CurrentTime; Write-Host " raptoreum-qt.exe folder is: " $dialog.SelectedPath ... -ForegroundColor Green
@@ -136,8 +133,14 @@ if ($customPath.ToLower() -eq "n") {
     $customDialog.Description = "Select the path to your custom RaptoreumCore wallet folder"
     $customDialog.ShowDialog() | Out-Null
     if ($customDialog.SelectedPath) {
+        # Change variables from default location to the custon wallet forlder
         $walletDirectory = "$customDialog.SelectedPath"
         $bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
+        $blocksDirectory = "$($customDialog.SelectedPath)\blocks"
+        $chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
+        $evodbDirectory = "$($customDialog.SelectedPath)\evodb"
+        $llmqDirectory = "$($customDialog.SelectedPath)\llmq"
+        $powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
         Write-CurrentTime; Write-Host " Your custom wallet folder is: '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
         Write-CurrentTime; Write-Host " Using this directory for the bootstrap.zip" -ForegroundColor Green
     } else {
@@ -195,52 +198,28 @@ if ($walletProcess) {
 # Check if one of the directories exist, if not, skip the prompt
 $directoriesExist = (Test-Path $blocksDirectory) -or (Test-Path $chainstateDirectory) -or (Test-Path $evodbDirectory) -or (Test-Path $llmqDirectory)
 if ($directoriesExist) {
-    # Prompt the user whether to archive or delete the directories and powcache.dat file
-    $archiveAction = Read-Host -Prompt "`nDo you want to archive(a) or delete(d) the directories and powcache.dat file? (a/d)"
-    if ($archiveAction -eq "a") {
-        $backupAction = "Archiving"
-        $removeAction = "archived"
-    } else {
-        $backupAction = "Deleting"
-        $removeAction = "deleted"
+    Write-CurrentTime; Write-Host " Existing folders found..." -ForegroundColor Green
+    # Delete the directories, if exist
+    foreach ($directory in @($blocksDirectory, $chainstateDirectory, $evodbDirectory, $llmqDirectory)) {
+        if (Test-Path $directory) {
+            $backupPath = Join-Path $backupDirectory "$(Split-Path $directory -Leaf)_$dateSuffix"
+            Write-CurrentTime; Write-Host " Deleting folder $directory in progress..." -ForegroundColor Green
+            Remove-Item $directory -Recurse -Force -ErrorAction Stop
+            Write-CurrentTime; Write-Host " The $directory directory has been $removeAction." -ForegroundColor Green
+        }
     }
 } else {
-    Write-CurrentTime; Write-Host " No directories found to delete." -ForegroundColor Yellow
-    $archiveAction = ""
-    $backupAction = ""
-    $removeAction = ""
+    Write-CurrentTime; Write-Host " No folders found to delete." -ForegroundColor Yellow
 }
 
-# Create the backup directory if it doesn't exist
-if (-not (Test-Path $backupDirectory)) {
-    Write-CurrentTime; Write-Host " Creating backup directory: $backupDirectory" -ForegroundColor Green
-    New-Item -ItemType Directory -Path $backupDirectory | Out-Null
-}
-
-# Archive or delete the directories and powcache.dat file based on the user's choice
-foreach ($directory in @($blocksDirectory, $chainstateDirectory, $evodbDirectory, $llmqDirectory)) {
-    if (Test-Path $directory) {
-        $backupPath = Join-Path $backupDirectory "$(Split-Path $directory -Leaf)_$dateSuffix"
-        Write-CurrentTime; Write-Host " $backupAction of directory $directory in progress..." -ForegroundColor Green
-        if ($archiveAction -eq "a") {
-            Move-Item $directory $backupPath -Force -ErrorAction Continue
-        }
-        #Remove-Item $directory -Recurse -Force -ErrorAction Stop
-        Write-CurrentTime; Write-Host " The $directory directory has been $removeAction." -ForegroundColor Green
-    }
-}
-
+# Delete the existing powcache.dat file, if exist
 if (Test-Path $powcachePath) {
-    $backupPath = Join-Path $backupDirectory "powcache_$dateSuffix.dat"
     Write-CurrentTime; Write-Host " Deleting the powcache.dat file in progress..." -ForegroundColor Green
-    if ($archiveAction -eq "a") {
-        Copy-Item $powcachePath $backupPath -Force -ErrorAction Continue
-    }
-    Remove-Item $powcachePath -Force -ErrorAction Continue
+    Remove-Item $powcachePath -Force -ErrorAction Stop
     Write-CurrentTime; Write-Host " The powcache.dat file has been $removeAction." -ForegroundColor Green
 }
 
-# Download (again) and extract the bootstrap if necessary. Test if 7-Zip is installed to use it.
+# Download (again) and extract the bootstrap if necessary. Detect if 7-Zip is installed to use it, faster.
 if (Test-Path $bootstrapZipPath) {
     Write-CurrentTime; Write-Host " Extracting bootstrap from $bootstrapZipPath..." -ForegroundColor Green
     $zipProgram = $null
