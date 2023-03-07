@@ -110,7 +110,7 @@ if (Test-Path $corePath) {
 else {
     Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : Not found" -ForegroundColor Yellow
     # Ask if there is a custom location or not
-    $answer = Read-Host "Do you need to select a custom directory for your RaptoreumCore launcher ? (y/n)"
+    $answer = Read-Host " Do you need to select a custom directory for your RaptoreumCore launcher ? (y/n)"
     if ($answer.ToLower() -eq "y") {
         # Ask for a custom directory, if raptoreum-qt.exe not found in default location
         $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
@@ -152,7 +152,7 @@ Write-CurrentTime; Write-Host " Download link: https://bootstrap.raptoreum.com/b
 
 # Ask is the wallet is correctly updated to the required version
 if (-not ($coreVersion -eq $latestVersion)) {
-    $answer = Read-Host "Your version differ from the latest available.`nHave you updated RaptoreumCore to version $($latestVersion) ? (y/n)"
+    $answer = Read-Host " Your version differ from the latest available.`n Have you updated RaptoreumCore to version $($latestVersion) ? (y/n)"
     if ($answer.ToLower() -ne "y") {
         Write-CurrentTime; Write-Host " Please update RaptoreumCore to version $latestVersion and run the script again." -ForegroundColor Red
         Write-CurrentTime; Write-Host " Download link: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
@@ -162,7 +162,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
 }
 
 # Ask if using the default wallet location
-$customPath = Read-Host "Is your RaptoreumCore wallet folder using the default location ? (Press enter if you don't know) (y/n)"
+$customPath = Read-Host " Is your RaptoreumCore wallet folder using the default location ? (Press enter if you don't know) (y/n)"
 if ($customPath.ToLower() -eq "n") {
     # Ask for a custom directory, if raptoreum-qt.exe not found in default location
     $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
