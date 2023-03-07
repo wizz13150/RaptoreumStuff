@@ -165,24 +165,26 @@ if (Test-Path $bootstrapZipPath) {
         Write-CurrentTime; Write-Host " Your bootstrap is not up to date or incomplete." -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Yellow
-        $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (y/n)"
-        if ($confirmDownload -eq "y") {
+        $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
+        if ($confirmDownload -eq "n") {
+            Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
+        } else {
             Write-CurrentTime; Write-Host " Downloading bootstrap.zip file..." -ForegroundColor Green
             Invoke-WebRequest -Uri $bootstrapUrl -OutFile $bootstrapZipPath -ErrorAction Stop
-        } else {
-            Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
+            # Check checksum
+            Check-BootstrapZipChecksum
         }
     }
 } else {
     Write-CurrentTime; Write-Host " No local 'bootstrap.zip' file detected." -ForegroundColor Yellow
-    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (y/n)"
-    if ($confirmDownload -eq "y") {
+    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
+    if ($confirmDownload -eq "n") {
+        Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
+    } else {
         Write-CurrentTime; Write-Host " Downloading bootstrap.zip file..." -ForegroundColor Green
         Invoke-WebRequest -Uri $bootstrapUrl -OutFile $bootstrapZipPath -ErrorAction Stop
         # Check checksum
         Check-BootstrapZipChecksum
-    } else {
-        Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     }
 }
 
@@ -202,7 +204,6 @@ if ($directoriesExist) {
     # Delete the directories, if exist
     foreach ($directory in @($blocksDirectory, $chainstateDirectory, $evodbDirectory, $llmqDirectory)) {
         if (Test-Path $directory) {
-            $backupPath = Join-Path $backupDirectory "$(Split-Path $directory -Leaf)_$dateSuffix"
             Write-CurrentTime; Write-Host " Deleting folder $directory in progress..." -ForegroundColor Green
             Remove-Item $directory -Recurse -Force -ErrorAction Stop
             Write-CurrentTime; Write-Host " The $directory directory has been $removeAction." -ForegroundColor Green
