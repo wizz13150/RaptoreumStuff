@@ -83,20 +83,23 @@ else {
         $dialog.Description = "Select the custom RaptoreumCore launcher folder"
         $dialog.ShowDialog() | Out-Null
         if ($dialog.SelectedPath) {
-            Write-CurrentTime; Write-Host " The selected folder is: " $dialog.SelectedPath ... -ForegroundColor Green
             $corePath = $dialog.SelectedPath + "\raptoreum-qt.exe"
             $coreVersion = Get-FileVersion $corePath
 
             # Test if selected folder contain raptoreum-qt.exe
             if (Test-Path "$corePath") {
                 Write-CurrentTime; Write-Host " raptoreum-qt.exe found..." -ForegroundColor Green
+                Write-CurrentTime; Write-Host " raptoreum-qt.exe folder is: " $dialog.SelectedPath ... -ForegroundColor Green
                 Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : $coreVersion" -ForegroundColor Green
             } else {
-                Write-CurrentTime; Write-Host " raptoreum-qt.exe not found, but continuing..." -ForegroundColor Yellow
+                Write-CurrentTime; Write-Host " raptoreum-qt.exe not found..." -ForegroundColor Yellow
             }
         } else {
             Write-CurrentTime; Write-Host " Your RaptoreumCore version was not found, but continuing..." -ForegroundColor Yellow
         }
+    }
+    if ($coreVersion -eq $null) {
+        Write-CurrentTime; Write-Host " Your RaptoreumCore version was not found, but continuing..." -ForegroundColor Yellow
     }
 }
 
@@ -191,6 +194,7 @@ if ($walletProcess) {
 
 # Check if one of the directories exist, if not, skip the prompt
 $directoriesExist = (Test-Path $blocksDirectory) -or (Test-Path $chainstateDirectory) -or (Test-Path $evodbDirectory) -or (Test-Path $llmqDirectory)
+
 if ($directoriesExist) {
     # Prompt the user whether to archive or delete the directories and powcache.dat file
     $archiveAction = Read-Host -Prompt "`nDo you want to archive(a) or delete(d) the directories and powcache.dat file? (a/d)"
