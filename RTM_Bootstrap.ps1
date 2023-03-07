@@ -186,9 +186,7 @@ if ($customPath.ToLower() -eq "n") {
 
 # Check if the bootstrap.zip file exists locally and if yes, check if a newer version is available
 if (Test-Path $bootstrapZipPath) {
-
     Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
-
 } else {
     Write-CurrentTime; Write-Host " No local 'bootstrap.zip' file detected." -ForegroundColor Yellow
     $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
