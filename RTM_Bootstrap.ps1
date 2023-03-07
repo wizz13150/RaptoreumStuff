@@ -134,13 +134,13 @@ if ($customPath.ToLower() -eq "n") {
     $customDialog.ShowDialog() | Out-Null
     if ($customDialog.SelectedPath) {
         # Change variables from default location to the custon wallet forlder
-        $walletDirectory = "$customDialog.SelectedPath"
-        $bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
-        $blocksDirectory = "$($customDialog.SelectedPath)\blocks"
-        $chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
-        $evodbDirectory = "$($customDialog.SelectedPath)\evodb"
-        $llmqDirectory = "$($customDialog.SelectedPath)\llmq"
-        $powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
+        [string]$walletDirectory = $customDialog.SelectedPath
+        [string]$bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
+        [string]$blocksDirectory = "$($customDialog.SelectedPath)\blocks"
+        [string]$chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
+        [string]$evodbDirectory = "$($customDialog.SelectedPath)\evodb"
+        [string]$llmqDirectory = "$($customDialog.SelectedPath)\llmq"
+        [string]$powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
         Write-CurrentTime; Write-Host " Your custom wallet folder is: '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
         Write-CurrentTime; Write-Host " Using this directory for the bootstrap.zip" -ForegroundColor Green
     } else {
@@ -221,7 +221,8 @@ if (Test-Path $powcachePath) {
 
 # Download (again) and extract the bootstrap if necessary. Detect if 7-Zip is installed to use it, faster.
 if (Test-Path $bootstrapZipPath) {
-    Write-CurrentTime; Write-Host " Extracting bootstrap from $bootstrapZipPath..." -ForegroundColor Green
+    Write-CurrentTime; Write-Host " Extracting bootstrap from: $bootstrapZipPath..." -ForegroundColor Green
+    Write-CurrentTime; Write-Host " Extracting bootstrap to  : $walletDirectory..." -ForegroundColor Green
     $zipProgram = $null
     if (Test-Path (Join-Path $env:ProgramFiles "7-zip\7z.exe")) {
         $zipProgram = (Join-Path $env:ProgramFiles "7-zip\7z.exe")
