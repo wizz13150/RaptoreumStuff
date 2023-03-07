@@ -1,3 +1,7 @@
+NOT OFFICIAL, NOT RELATED TO THE RAPTOREUM CORE TEAM
+
+-----------------------------------
+
 Powershell script to apply a Bootstrap to the RaptoreumCore Wallet, on Windows 10.
 
 Just run and answer the questions if you're using custom folders.
