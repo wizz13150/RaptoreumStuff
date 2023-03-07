@@ -86,7 +86,7 @@ function Check-BootstrapZip {
         Write-CurrentTime; Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Yellow
         $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
-        if ($confirmDownload -eq "n") {
+        if ($confirmDownload.ToLower() -eq "n") {
             Write-CurrentTime
             Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
         } 
@@ -97,6 +97,24 @@ function Check-BootstrapZip {
             # Check checksum
             Check-BootstrapZipChecksum
         }
+    }
+}
+
+# Function to print download informations
+function Download-FileWithProgress {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Url,
+        [Parameter(Mandatory=$true)]
+        [string]$FilePath
+    )
+    Write-Host " Downloading the bootstrap from $Url"
+    Write-Progress -Activity "Downloading the bootstrap..." -Status " Downloading..." -PercentComplete 0
+    Invoke-WebRequest -Uri $Url -OutFile $FilePath -ErrorAction Stop
+    if ($LASTEXITCODE -eq 0) {
+        Write-Progress -Activity " Download of the bootstrap..." -Status " Download complete!" -PercentComplete 100
+    } else {
+        Write-Progress -Activity " Download of the bootstrap..." -Status " Download failed!" -PercentComplete 100
     }
 }
 
@@ -190,11 +208,11 @@ if (Test-Path $bootstrapZipPath) {
 } else {
     Write-CurrentTime; Write-Host " No local 'bootstrap.zip' file detected." -ForegroundColor Yellow
     $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
-    if ($confirmDownload -eq "n") {
+    if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     } else {
         Write-CurrentTime; Write-Host " Downloading the bootstrap.zip file..." -ForegroundColor Green
-        Invoke-WebRequest -Uri $bootstrapUrl -OutFile $bootstrapZipPath -ErrorAction Stop
+        Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
         Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
     }
 }
@@ -252,11 +270,11 @@ if (Test-Path $bootstrapZipPath) {
 } else {
     Write-CurrentTime; Write-Host " No 'bootstrap.zip' file detected in the wallet directory." -ForegroundColor Yellow
     $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
-    if ($confirmDownload -eq "n") {
+    if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     } else {
         Write-CurrentTime; Write-Host " Downloading the bootstrap.zip file..." -ForegroundColor Green
-        Invoke-WebRequest -Uri $bootstrapUrl -OutFile $bootstrapZipPath -ErrorAction Stop
+        Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
         Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
     }
 }
