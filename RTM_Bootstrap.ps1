@@ -2,17 +2,17 @@
 ### Script Bootstrap Auto to latest version, for windows ###
 ############################################################
 
-# Allow to run the script on a restricted execution policy - To Do/Test
-# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
+# Allow to run the script - To Test
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
 
 Write-Warning "Starting the script to automatically apply a Raptoreum bootstrap"
 
 # Definition of variables
 
 # Path to the wallet folder to which the bootstrap should be applied. "$env:APPDATA\raptoreumcore" by default.
-$walletDirectory = "$env:APPDATA\raptoreumcore"
+$walletDirectory = "E:\Raptoreum\Wallet"
 # Path to the bootstrap.zip file
-$bootstrapZipPath = "$env:APPDATA\raptoreumcore\bootstrap.zip"
+$bootstrapZipPath = "E:\Raptoreum\bootstrap\bootstrap.zip"
 
 # Other fixed variables
 $walletProcessName = "raptoreum*"
@@ -24,12 +24,15 @@ $chainstateDirectory = "$walletDirectory\chainstate"
 $evodbDirectory = "$walletDirectory\evodb"
 $llmqDirectory = "$walletDirectory\llmq"
 $powcachePath = "$walletDirectory\powcache.dat"
+# Dialog box to select a folder later
+Add-Type -AssemblyName System.Windows.Forms
 
 # Function to display date and time
 function Write-CurrentTime {
     Write-Host ('[' + (Get-Date).ToString("HH:mm:ss") + ']') -NoNewline
 }
 
+# Function to check the checksum of the downloaded/used bootstrap.zip file
 function Check-BootstrapZipChecksum {
     Write-CurrentTime; Write-Host " Checking checksum of the 'bootstrap.zip' file..." -ForegroundColor Green
     Write-CurrentTime; Write-Host " Source: https://checksums.raptoreum.com/checksums/bootstrap-checksums.txt" -ForegroundColor Green
@@ -52,17 +55,18 @@ function Check-BootstrapZipChecksum {
     }
 }
 
+# Function to get the raptoreum-qt.exe version
 function Get-FileVersion {
     param (
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
-    $fileVersionInfo = Get-Item $FilePath | Get-ItemProperty | Select-Object -ExpandProperty VersionInfo
+
+    $fileVersionInfo = Get-Item $FilePath -ErrorAction SilentlyContinue| Get-ItemProperty | Select-Object -ExpandProperty VersionInfo
     return $fileVersionInfo.ProductVersion
 }
 
 # Checking the current and the latest versions available
-
 # Check current version on the computer, if default folder
 $corePath = "$env:ProgramFiles\RaptoreumCore\raptoreum-qt.exe"
 if (Test-Path $corePath) {
@@ -71,6 +75,29 @@ if (Test-Path $corePath) {
 }
 else {
     Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : Not found" -ForegroundColor Yellow
+    # Ask if there is a custom location or not
+    $answer = Read-Host "Do you need to select a custom directory for your RaptoreumCore launcher ? (y/n)"
+    if ($answer.ToLower() -eq "y") {
+        # Ask for a custom directory, if raptoreum-qt.exe not found in default location
+        $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+        $dialog.Description = "Select the custom RaptoreumCore launcher folder"
+        $dialog.ShowDialog() | Out-Null
+        if ($dialog.SelectedPath) {
+            Write-CurrentTime; Write-Host " The selected folder is: " $dialog.SelectedPath ... -ForegroundColor Green
+            $corePath = $dialog.SelectedPath + "\raptoreum-qt.exe"
+            $coreVersion = Get-FileVersion $corePath
+
+            # Test if selected folder contain raptoreum-qt.exe
+            if (Test-Path "$corePath") {
+                Write-CurrentTime; Write-Host " raptoreum-qt.exe found..." -ForegroundColor Green
+                Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : $coreVersion" -ForegroundColor Green
+            } else {
+                Write-CurrentTime; Write-Host " raptoreum-qt.exe not found, but continuing..." -ForegroundColor Yellow
+            }
+        } else {
+            Write-CurrentTime; Write-Host " Your RaptoreumCore version was not found, but continuing..." -ForegroundColor Yellow
+        }
+    }
 }
 
 # Get latest version number of RaptoreumCore available, from github
@@ -89,12 +116,29 @@ Write-CurrentTime; Write-Host " Download link: https://bootstrap.raptoreum.com/b
 
 # Ask is the wallet is correctly updated to the required version
 if (-not ($coreVersion -eq $latestVersion)) {
-    $answer = Read-Host "Have you updated RaptoreumCore to version $latestVersion? (y/n)"
+    $answer = Read-Host "Your version differ from the latest available.`nHave you updated RaptoreumCore to version $($latestVersion) ? (y/n)"
     if ($answer.ToLower() -ne "y") {
         Write-CurrentTime; Write-Host " Please update RaptoreumCore to version $latestVersion and run the script again." -ForegroundColor Red
         Write-CurrentTime; Write-Host " Download link: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
         pause
         exit
+    }
+}
+
+# Ask if using the default wallet location
+$customPath = Read-Host "Is your RaptoreumCore wallet folder using the default location ? (Press enter if you don't know) (y/n)"
+if ($customPath.ToLower() -eq "n") {
+    # Ask for a custom directory, if raptoreum-qt.exe not found in default location
+    $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
+    $customDialog.Description = "Select the path to your custom RaptoreumCore wallet folder"
+    $customDialog.ShowDialog() | Out-Null
+    if ($customDialog.SelectedPath) {
+        $walletDirectory = "$customDialog.SelectedPath"
+        $bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
+        Write-CurrentTime; Write-Host " Your custom wallet folder is: '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
+        Write-CurrentTime; Write-Host " Using this directory for the bootstrap.zip" -ForegroundColor Green
+    } else {
+        Write-CurrentTime; Write-Host " Custom wallet location not found, but continuing with default location..." -ForegroundColor Yellow
     }
 }
 
@@ -147,7 +191,6 @@ if ($walletProcess) {
 
 # Check if one of the directories exist, if not, skip the prompt
 $directoriesExist = (Test-Path $blocksDirectory) -or (Test-Path $chainstateDirectory) -or (Test-Path $evodbDirectory) -or (Test-Path $llmqDirectory)
-
 if ($directoriesExist) {
     # Prompt the user whether to archive or delete the directories and powcache.dat file
     $archiveAction = Read-Host -Prompt "`nDo you want to archive(a) or delete(d) the directories and powcache.dat file? (a/d)"
