@@ -217,7 +217,7 @@ if ($directoriesExist) {
         if (Test-Path $directory) {
             Write-CurrentTime; Write-Host " Deleting folder $directory in progress..." -ForegroundColor Green
             Remove-Item $directory -Recurse -Force -ErrorAction Stop
-            Write-CurrentTime; Write-Host " The $directory directory has been $removeAction." -ForegroundColor Green
+            Write-CurrentTime; Write-Host " The $directory directory has been deleted..." -ForegroundColor Green
         }
     }
 } else {
@@ -228,7 +228,7 @@ if ($directoriesExist) {
 if (Test-Path $powcachePath) {
     Write-CurrentTime; Write-Host " Deleting the powcache.dat file in progress..." -ForegroundColor Green
     Remove-Item $powcachePath -Force -ErrorAction Stop
-    Write-CurrentTime; Write-Host " The powcache.dat file has been $removeAction." -ForegroundColor Green
+    Write-CurrentTime; Write-Host " The powcache.dat file has been deleted..." -ForegroundColor Green
 }
 
 # Download (again) and extract the bootstrap if necessary. Detect if 7-Zip is installed to use it, faster.
