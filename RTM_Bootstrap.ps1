@@ -194,7 +194,6 @@ if ($walletProcess) {
 
 # Check if one of the directories exist, if not, skip the prompt
 $directoriesExist = (Test-Path $blocksDirectory) -or (Test-Path $chainstateDirectory) -or (Test-Path $evodbDirectory) -or (Test-Path $llmqDirectory)
-
 if ($directoriesExist) {
     # Prompt the user whether to archive or delete the directories and powcache.dat file
     $archiveAction = Read-Host -Prompt "`nDo you want to archive(a) or delete(d) the directories and powcache.dat file? (a/d)"
