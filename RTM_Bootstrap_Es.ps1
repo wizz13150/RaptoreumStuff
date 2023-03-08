@@ -83,7 +83,7 @@ function Check-BootstrapZip {
         Write-CurrentTime; Write-Host " Bootstrap Local     : Tamaño: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Fecha: $($localFile.LastWriteTime)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Bootstrap en lí­nea  : Tamaño: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Fecha: $($remoteLastModified)" -ForegroundColor Yellow
         Get-BootstrapSize
-        $confirmDownload = Read-Host " Desea descargar el archivo bootstrap.zip ? (Presione Enter si no lo sabe) (s/n)"
+        $confirmDownload = Read-Host " Desea descargar el archivo bootstrap.zip ?`n (Presione Enter si no lo sabe) (s/n)"
         if ($confirmDownload.ToLower() -eq "n") {
             Write-CurrentTime; Write-Host " No se descargará el archivo bootstrap.zip, pero se continuará..." -ForegroundColor Yellow
         } 
@@ -188,7 +188,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
 }
 
 # Preguntar si se está utilizando la ubicación de la billetera predeterminada
-$customPath = Read-Host " Está utilizando la carpeta de la billetera Raptoreum en la ubicación predeterminada? (Presione enter si no lo sabe) (s/n)"
+$customPath = Read-Host " Está utilizando la carpeta de la billetera Raptoreum en la ubicación predeterminada?`n (Presione enter si no lo sabe) (s/n)"
 if ($customPath.ToLower() -eq "n") {
     # Pedir un directorio personalizado, si no se encuentra raptoreum-qt.exe en la ubicación predeterminada
     $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
@@ -216,7 +216,7 @@ if (Test-Path $bootstrapZipPath) {
 } else {
     Write-CurrentTime; Write-Host " No se ha detectado ningún archivo 'bootstrap.zip' local." -ForegroundColor Yellow
     Get-BootstrapSize
-    $confirmDownload = Read-Host " Desea descargar el archivo bootstrap.zip? (Presione enter si no sabe) (s/n)"
+    $confirmDownload = Read-Host " Desea descargar el archivo bootstrap.zip?`n (Presione enter si no sabe) (s/n)"
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " No se descargará el archivo bootstrap.zip, pero se continuará..." -ForegroundColor Yellow
     } else {
@@ -278,7 +278,7 @@ if (Test-Path $bootstrapZipPath) {
 } else {
     Write-CurrentTime; Write-Host " No se ha detectado ningún archivo 'bootstrap.zip' en el directorio de la billetera." -ForegroundColor Yellow
     Get-BootstrapSize
-    $confirmDownload = Read-Host " Desea descargar el archivo bootstrap.zip? (Presione enter si no sabe) (s/n)"
+    $confirmDownload = Read-Host " Desea descargar el archivo bootstrap.zip?`n (Presione enter si no sabe) (s/n)"
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " No se descargará el archivo bootstrap.zip, pero se continuará..." -ForegroundColor Yellow
     } else {
