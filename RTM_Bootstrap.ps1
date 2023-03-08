@@ -67,8 +67,8 @@ function Check-BootstrapZip {
         [string]$bootstrapZipPath,
         [string]$bootstrapUrl
     )
-    $localFile = Get-Item $bootstrapZipPath
-    $remoteFile = Invoke-WebRequest -Uri $bootstrapUrl -Method Head
+    $localFile = Get-Item $bootstrapZipPath -ErrorAction SilentlyContinue
+    $remoteFile = Invoke-WebRequest -Uri $bootstrapUrl -Method Head -UseBasicParsing
     $remoteLastModified = [datetime]::ParseExact($remoteFile.Headers.'Last-Modified', 'ddd, dd MMM yyyy HH:mm:ss \G\M\T', [System.Globalization.CultureInfo]::InvariantCulture)
     $remoteSize = $remoteFile.Headers.'Content-Length'
     if ($localFile.LastWriteTime -ge $remoteLastModified -and $localFile.Length -eq $remoteSize) {
@@ -104,8 +104,17 @@ function Download-FileWithProgress {
         [string]$FilePath
     )
     Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url" -ForegroundColor Green
-    $webClient = New-Object System.Net.WebClient
-    $webClient.DownloadFile($Url, $FilePath)
+    # Check if the destination path exist
+    if (Test-Path $walletDirectory) {
+        $webClient = New-Object System.Net.WebClient
+        $webClient.DownloadFile($Url, $FilePath)
+    }
+    else {
+        Write-CurrentTime; Write-Host "The folder $walletDirectory does not exist..." -ForegroundColor Red
+        Write-CurrentTime; Write-Host "Please restart the script and select a correct location for the wallet..." -ForegroundColor Green
+        pause
+        exit
+    }
 }
 
 # Function to get the online bootstrap size
