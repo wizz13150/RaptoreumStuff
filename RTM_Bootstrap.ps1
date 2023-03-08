@@ -106,17 +106,9 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
-    # Create a new WebClient object
-    $webClient = New-Object System.Net.WebClient
     Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url" -ForegroundColor Green
-    try {
-        # Download the file and show progress
-        $webClient.DownloadFile($Url, $FilePath)
-    } catch {
-        Write-Host "Failed to download file from $Url" -ForegroundColor Red
-        Write-Host $_.Exception.Message
-        exit 1
-    }
+    $webClient = New-Object System.Net.WebClient
+    $webClient.DownloadFile($Url, $FilePath)
 }
 
 # Function to get the online bootstrap size
