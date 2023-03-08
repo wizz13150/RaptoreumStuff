@@ -67,8 +67,8 @@ function Check-BootstrapZip {
         [string]$bootstrapZipPath,
         [string]$bootstrapUrl
     )
-    $localFile = Get-Item $bootstrapZipPath
-    $remoteFile = Invoke-WebRequest -Uri $bootstrapUrl -Method Head
+    $localFile = Get-Item $bootstrapZipPath -ErrorAction SilentlyContinue
+    $remoteFile = Invoke-WebRequest -Uri $bootstrapUrl -Method Head -UseBasicParsing
     $remoteLastModified = [datetime]::ParseExact($remoteFile.Headers.'Last-Modified', 'ddd, dd MMM yyyy HH:mm:ss \G\M\T', [System.Globalization.CultureInfo]::InvariantCulture)
     $remoteSize = $remoteFile.Headers.'Content-Length'
     if ($localFile.LastWriteTime -ge $remoteLastModified -and $localFile.Length -eq $remoteSize) {
