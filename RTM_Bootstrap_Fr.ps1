@@ -104,8 +104,16 @@ function Download-FileWithProgress {
         [string]$FilePath
     )
     Write-CurrentTime; Write-Host " Téléchargement du bootstrap depuis $Url" -ForegroundColor Green
-    $webClient = New-Object System.Net.WebClient
-    $webClient.DownloadFile($Url, $FilePath)
+    # Vérifie si le répertoire de destination existe
+    if (Test-Path $walletDirectory) {
+        $webClient = New-Object System.Net.WebClient
+        $webClient.DownloadFile($Url, $FilePath)
+    }
+    else {
+        Write-CurrentTime; Write-Host " Le dossier $walletDirectory n'existe pas..." -ForegroundColor Red
+        pause
+        exit
+    }
 }
 
 # Fonction pour obtenir la taille du bootstrap en ligne
