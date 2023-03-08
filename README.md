@@ -22,7 +22,7 @@ Detect if 7-Zip is on the computer, +30% faster for the extraction.
 
 Detect your RaptoreumCore version, or ask for a custom folder.
 
-If you want to use your local bootstrap.zip, put it in your wallet folder.
+If you want to use your local (up to date) bootstrap.zip, put it in your wallet folder.
 
 Take 10 min to complete, for me. (03/23)
 
