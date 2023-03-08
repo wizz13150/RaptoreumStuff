@@ -83,7 +83,7 @@ function Check-BootstrapZip {
         Write-CurrentTime; Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Yellow
         Get-BootstrapSize
-        $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ? (Press enter if you don't know) (y/n)"
+        $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ?`n (Press enter if you don't know) (y/n)"
         if ($confirmDownload.ToLower() -eq "n") {
             Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
         } 
@@ -188,7 +188,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
 }
 
 # Ask if using the default wallet location
-$customPath = Read-Host " Is your RaptoreumCore wallet folder using the default location ? (Press enter if you don't know) (y/n)"
+$customPath = Read-Host " Is your RaptoreumCore wallet folder using the default location ?`n (Press enter if you don't know) (y/n)"
 if ($customPath.ToLower() -eq "n") {
     # Ask for a custom directory, if raptoreum-qt.exe not found in default location
     $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
@@ -216,7 +216,7 @@ if (Test-Path $bootstrapZipPath) {
 } else {
     Write-CurrentTime; Write-Host " No local 'bootstrap.zip' file detected." -ForegroundColor Yellow
     Get-BootstrapSize
-    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ? (Press enter if you don't know) (y/n)"
+    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ?`n (Press enter if you don't know) (y/n)"
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     } else {
@@ -278,7 +278,7 @@ if (Test-Path $bootstrapZipPath) {
 } else {
     Write-CurrentTime; Write-Host " No 'bootstrap.zip' file detected in the wallet directory." -ForegroundColor Yellow
     Get-BootstrapSize
-    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ? (Press enter if you don't know) (y/n)"
+    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ?`n (Press enter if you don't know) (y/n)"
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     } else {
