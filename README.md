@@ -4,17 +4,9 @@ NOT OFFICIAL, NOT RELATED TO THE RAPTOREUM CORE TEAM
 
 Powershell script to apply a Bootstrap to the RaptoreumCore Wallet, on Windows 10.
 
-Available in English, download and run :
+Available in English, in French, and in Spanish:
 
-https://github.com/wizz13150/RaptoreumStuff/blob/main/RTM_Bootstrap.bat
-
-In French, download and run :
-
-https://github.com/wizz13150/RaptoreumStuff/blob/main/RTM_Bootstrap_Fr.bat
-
-And in Spanish, download and run :
-
-https://github.com/wizz13150/RaptoreumStuff/blob/main/RTM_Bootstrap_Es.bat
+https://github.com/wizz13150/RaptoreumStuff/releases/tag/RTMBootstrap
 
 Just run and answer the questions if you're using custom folders.
 
