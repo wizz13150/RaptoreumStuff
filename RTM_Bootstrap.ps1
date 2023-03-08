@@ -185,6 +185,13 @@ if (-not ($coreVersion -eq $latestVersion)) {
         pause
         exit
     }
+    else {
+        # Check the version one last time and prompt to update with a link
+        if (-not ($coreVersion -eq $latestVersion)) {
+            Write-CurrentTime; Write-Host "The version appears to be incorrect, we will proceed but you may encounter an error when launching." -ForegroundColor Yellow
+            Write-CurrentTime; Write-Host "Download link: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
+        }
+    }
 }
 
 # Ask if using the default wallet location
