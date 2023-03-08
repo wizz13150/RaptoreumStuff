@@ -185,6 +185,13 @@ if (-not ($coreVersion -eq $latestVersion)) {
         pause
         exit
     }
+    else {
+        # Vérifie une dernière fois la version, invite à mettre à jour avec un lien
+        if (-not ($coreVersion -eq $latestVersion)) {
+            Write-CurrentTime; Write-Host " La version semble être incorrecte, on continue mais vous risquez de rencontrer une erreur au lancement." -ForegroundColor Yellow
+            Write-CurrentTime; Write-Host " Lien de téléchargement : https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
+        }
+    }
 }
 
 # Demande si l'emplacement par défaut du portefeuille est utilisé
