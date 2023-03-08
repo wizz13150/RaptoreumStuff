@@ -88,20 +88,17 @@ function Check-BootstrapZip {
         Get-BootstrapSize
         $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ? (Press enter if you don't know) (y/n)"
         if ($confirmDownload.ToLower() -eq "n") {
-            Write-CurrentTime
-            Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
+            Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
         } 
         else {
-            Write-CurrentTime
-            Write-Host " Downloading the bootstrap.zip file..." -ForegroundColor Green
-            Invoke-WebRequest -Uri $bootstrapUrl -OutFile $bootstrapZipPath -ErrorAction Stop
+            Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
             # Check checksum
             Check-BootstrapZipChecksum
         }
     }
 }
 
-# Function to print download informations
+# Function to download the bootstrap
 function Download-FileWithProgress {
     param(
         [Parameter(Mandatory=$true)]
@@ -109,15 +106,17 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
+    # Create a new WebClient object
+    $webClient = New-Object System.Net.WebClient
     Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url" -ForegroundColor Green
-    #Write-Progress -Activity "Downloading the bootstrap..." -Status " Downloading..." -PercentComplete 0
-    Invoke-WebRequest -Uri $Url -OutFile $FilePath -ErrorAction Stop
-    # Improve the download here - ToDo
-    #if ($LASTEXITCODE -eq 0) {
-        #Write-Progress -Activity " Download of the bootstrap..." -Status " Download complete!" -PercentComplete 100
-    #} else {
-        #Write-Progress -Activity " Download of the bootstrap..." -Status " Download failed!" -PercentComplete 100
-    #}
+    try {
+        # Download the file and show progress
+        $webClient.DownloadFile($Url, $FilePath)
+    } catch {
+        Write-Host "Failed to download file from $Url" -ForegroundColor Red
+        Write-Host $_.Exception.Message
+        exit 1
+    }
 }
 
 # Function to get the online bootstrap size
@@ -285,7 +284,6 @@ if (Test-Path $bootstrapZipPath) {
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     } else {
-        Write-CurrentTime; Write-Host " Downloading the bootstrap.zip file..." -ForegroundColor Green
         Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
         Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
     }
