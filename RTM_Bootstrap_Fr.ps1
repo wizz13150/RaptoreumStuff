@@ -83,7 +83,7 @@ function Check-BootstrapZip {
         Write-CurrentTime; Write-Host " Bootstrap local    : Taille: $(("{0:N2}" -f ($localFile.Length / 1GB))) Go, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Bootstrap en ligne : Taille: $(("{0:N2}" -f ($remoteSize / 1GB))) Go, Date: $($remoteLastModified)" -ForegroundColor Yellow
         Get-BootstrapSize
-        $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ? (Appuyez sur Entrée si vous ne savez pas) (o/n)"
+        $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ?`n (Appuyez sur Entrée si vous ne savez pas) (o/n)"
         if ($confirmDownload.ToLower() -eq "n") {
             Write-CurrentTime; Write-Host " On ne télécharge pas le fichier bootstrap.zip, mais on continue..." -ForegroundColor Yellow
         } 
@@ -188,7 +188,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
 }
 
 # Demande si l'emplacement par défaut du portefeuille est utilisé
-$customPath = Read-Host " Votre portefeuille RaptoreumCore utilise-t-il l'emplacement par défaut ? (Appuyez sur Entrée si vous ne savez pas) (o/n)"
+$customPath = Read-Host " Votre portefeuille RaptoreumCore utilise-t-il l'emplacement par défaut ?`n (Appuyez sur Entrée si vous ne savez pas) (o/n)"
 if ($customPath.ToLower() -eq "n") {
     # Demande un répertoire personnalisé, si raptoreum-qt.exe n'est pas trouvé dans l'emplacement par défaut
     $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
@@ -216,7 +216,7 @@ if (Test-Path $bootstrapZipPath) {
 } else {
     Write-CurrentTime; Write-Host " Aucun fichier 'bootstrap.zip' local détecté." -ForegroundColor Yellow
     Get-BootstrapSize
-    $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ? (Appuyez sur Entrée si vous ne savez pas) (o/n)"
+    $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ?`n (Appuyez sur Entrée si vous ne savez pas) (o/n)"
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " On ne télécharge pas le fichier bootstrap.zip, mais on continue..." -ForegroundColor Yellow
     } else {
@@ -278,7 +278,7 @@ if (Test-Path $bootstrapZipPath) {
 } else {
     Write-CurrentTime; Write-Host " Aucun fichier 'bootstrap.zip' détecté dans le répertoire du portefeuille." -ForegroundColor Yellow
     Get-BootstrapSize
-    $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ? (Appuyez sur Entrée si vous ne savez pas) (o/n)"
+    $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ?`n (Appuyez sur Entrée si vous ne savez pas) (o/n)"
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " On ne télécharge pas le fichier bootstrap.zip, mais on continue..." -ForegroundColor Yellow
     } else {
