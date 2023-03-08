@@ -185,6 +185,13 @@ if (-not ($coreVersion -eq $latestVersion)) {
         pause
         exit
     }
+    else {
+        # Verificar la versión una última vez y pedir que se actualice con un enlace
+        if (-not ($coreVersion -eq $latestVersion)) {
+            Write-CurrentTime; Write-Host "La versión parece ser incorrecta, continuaremos pero es posible que encuentre un error al iniciar." -ForegroundColor Yellow
+            Write-CurrentTime; Write-Host "Enlace de descarga: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
+        }
+    }
 }
 
 # Preguntar si se está utilizando la ubicación de la billetera predeterminada
