@@ -111,6 +111,7 @@ function Download-FileWithProgress {
     }
     else {
         Write-CurrentTime; Write-Host " Le dossier $walletDirectory n'existe pas..." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " Veuillez relancer le script et saisir un emplacement correct pour le wallet..." -ForegroundColor Green
         pause
         exit
     }
