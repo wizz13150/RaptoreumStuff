@@ -85,7 +85,8 @@ function Check-BootstrapZip {
         Write-CurrentTime; Write-Host " Your bootstrap is not up to date or incomplete." -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Yellow
-        $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
+        Get-BootstrapSize
+        $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ($sizeInGB GB) ? (Press enter if you don't know) (y/n)"
         if ($confirmDownload.ToLower() -eq "n") {
             Write-CurrentTime
             Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
@@ -117,6 +118,15 @@ function Download-FileWithProgress {
     #} else {
         #Write-Progress -Activity " Download of the bootstrap..." -Status " Download failed!" -PercentComplete 100
     #}
+}
+
+# Function to get the online bootstrap size
+function Get-BootstrapSize {
+    $bootstrapUrl = "https://bootstrap.raptoreum.com/bootstraps/bootstrap.zip"
+    $response = Invoke-WebRequest -Uri $bootstrapUrl -Method Head -UseBasicParsing
+    $sizeInBytes = $response.Headers.'Content-Length'
+    $sizeInGB = [math]::Round($sizeInBytes / 1GB, 2)
+    Write-CurrentTime; Write-Host " Online Bootstrap size: $sizeInBytes bytes ($sizeInGB GB)" -ForegroundColor Green
 }
 
 # Checking the current and the latest versions available
@@ -208,7 +218,8 @@ if (Test-Path $bootstrapZipPath) {
     Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
 } else {
     Write-CurrentTime; Write-Host " No local 'bootstrap.zip' file detected." -ForegroundColor Yellow
-    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
+    Get-BootstrapSize
+    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ? (Press enter if you don't know) (y/n)"
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     } else {
@@ -269,7 +280,8 @@ if (Test-Path $bootstrapZipPath) {
     }
 } else {
     Write-CurrentTime; Write-Host " No 'bootstrap.zip' file detected in the wallet directory." -ForegroundColor Yellow
-    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file? (Press enter if you don't know) (y/n)"
+    Get-BootstrapSize
+    $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ? (Press enter if you don't know) (y/n)"
     if ($confirmDownload.ToLower() -eq "n") {
         Write-CurrentTime; Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
     } else {
