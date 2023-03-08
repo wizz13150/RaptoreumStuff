@@ -1,5 +1,7 @@
 NOT OFFICIAL, NOT RELATED TO THE RAPTOREUM CORE TEAM
 
+-- Download 10 times slower using the .bat file - ToDo tomorrow
+
 -----------------------------------
 
 Powershell script to apply a Bootstrap to the RaptoreumCore Wallet, on Windows 10.
