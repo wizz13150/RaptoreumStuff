@@ -81,20 +81,17 @@ function Check-BootstrapZip {
         # Vérifier la somme de contrôle
         Check-BootstrapZipChecksum
     } 
-    else {
+        else {
         Write-CurrentTime; Write-Host " Votre bootstrap n'est pas à jour ou est incomplet." -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Bootstrap local    : Taille: $(("{0:N2}" -f ($localFile.Length / 1GB))) Go, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Bootstrap en ligne : Taille: $(("{0:N2}" -f ($remoteSize / 1GB))) Go, Date: $($remoteLastModified)" -ForegroundColor Yellow
         Get-BootstrapSize
         $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ? (Appuyez sur Entrée si vous ne savez pas) (o/n)"
         if ($confirmDownload.ToLower() -eq "n") {
-            Write-CurrentTime
-            Write-Host " On ne télécharge pas le fichier bootstrap.zip, mais on continue..." -ForegroundColor Yellow
+            Write-CurrentTime; Write-Host " On ne télécharge pas le fichier bootstrap.zip, mais on continue..." -ForegroundColor Yellow
         } 
         else {
-            Write-CurrentTime
-            Write-Host " Téléchargement du fichier bootstrap.zip..." -ForegroundColor Green
-            Invoke-WebRequest -Uri $bootstrapUrl -OutFile $bootstrapZipPath -ErrorAction Stop
+            Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
             # Vérifier la somme de contrôle
             Check-BootstrapZipChecksum
         }
