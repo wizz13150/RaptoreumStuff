@@ -98,7 +98,7 @@ function Check-BootstrapZip {
     }
 }
 
-# Fonction pour télécharger un fichier avec une barre de progression
+# Fonction pour télécharger le bootstrap
 function Download-FileWithProgress {
     param(
         [Parameter(Mandatory=$true)]
@@ -106,13 +106,9 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
-    $webClient = New-Object System.Net.WebClient
-    $webClient.DownloadProgressChanged += { 
-        Write-Progress -Activity "Téléchargement en cours..." -PercentComplete $_.ProgressPercentage
-    }
     Write-CurrentTime; Write-Host " Téléchargement du bootstrap depuis $Url" -ForegroundColor Green
+    $webClient = New-Object System.Net.WebClient
     $webClient.DownloadFile($Url, $FilePath)
-    $webClient.DownloadProgressChanged = $null
 }
 
 # Fonction pour obtenir la taille du bootstrap en ligne
