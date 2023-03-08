@@ -95,6 +95,7 @@ function Check-BootstrapZip {
     }
 }
 
+# Fonction pour télécharger le bootstrap
 function Download-FileWithProgress {
     param(
         [Parameter(Mandatory=$true)]
@@ -102,11 +103,9 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
-    Write-CurrentTime; Write-Host " Téléchargement du bootstrap depuis $Url" -ForegroundColor Green    
-    $client = New-Object System.Net.Http.HttpClient
-    $response = $client.GetAsync($Url).Result
-    $response.EnsureSuccessStatusCode()
-    [System.IO.File]::WriteAllBytes($FilePath, $response.Content.ReadAsByteArrayAsync().Result)
+    Write-CurrentTime; Write-Host " Téléchargement du bootstrap depuis $Url" -ForegroundColor Green
+    $webClient = New-Object System.Net.WebClient
+    $webClient.DownloadFile($Url, $FilePath)
 }
 
 # Fonction pour obtenir la taille du bootstrap en ligne
