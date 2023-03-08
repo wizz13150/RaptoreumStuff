@@ -2,9 +2,6 @@
 ### Script d'installation automatique du bootstrap Raptoreum, pour Windows ###
 ##############################################################################
 
-# Autorise l'exécution du script - To test
-#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
-
 Write-Warning "Démarrage du script d'installation automatique du bootstrap Raptoreum"
 
 # Définition des variables
