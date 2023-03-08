@@ -86,7 +86,7 @@ function Check-BootstrapZip {
         Write-CurrentTime; Write-Host " Local Bootstrap    : Size: $(("{0:N2}" -f ($localFile.Length / 1GB))) GB, Date: $($localFile.LastWriteTime)" -ForegroundColor Yellow
         Write-CurrentTime; Write-Host " Online Bootstrap   : Size: $(("{0:N2}" -f ($remoteSize / 1GB))) GB, Date: $($remoteLastModified)" -ForegroundColor Yellow
         Get-BootstrapSize
-        $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ($sizeInGB GB) ? (Press enter if you don't know) (y/n)"
+        $confirmDownload = Read-Host " Do you want to download the bootstrap.zip file ? (Press enter if you don't know) (y/n)"
         if ($confirmDownload.ToLower() -eq "n") {
             Write-CurrentTime
             Write-Host " Not downloading the bootstrap.zip file, but continuing..." -ForegroundColor Yellow
