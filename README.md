@@ -33,7 +33,6 @@ Enjoy.
 Screenshot :
 
 
-![image](https://user-images.githubusercontent.com/22177081/223591989-3b6ee7f8-fe16-4f42-9e2a-664ddf1ba0bb.png)
-
+![image](https://user-images.githubusercontent.com/22177081/223608627-fadb985e-4757-4aff-9d24-acc4d43e482d.png)
 
 
