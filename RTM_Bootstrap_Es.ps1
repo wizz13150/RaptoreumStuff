@@ -1,6 +1,6 @@
-﻿############################################################
+##################################################################
 ### Script Bootstrap Auto para la última versión, para Windows ###
-############################################################
+##################################################################
 
 # Permitir la ejecución del script - Para probar
 #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
