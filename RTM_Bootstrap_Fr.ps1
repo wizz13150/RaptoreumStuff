@@ -95,26 +95,37 @@ function Check-BootstrapZip {
     }
 }
 
-# Fonction pour télécharger le bootstrap
-function Download-FileWithProgress {
+# Fonction pour télécharger le bootstrap avec suivi de progression
+function Telecharger-FichierAvecProgression {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Url,
         [Parameter(Mandatory=$true)]
-        [string]$FilePath
-    )
-    Write-CurrentTime; Write-Host " Téléchargement du bootstrap depuis $Url" -ForegroundColor Green
-    # Vérifie si le répertoire de destination existe
-    if (Test-Path $walletDirectory) {
-        $webClient = New-Object System.Net.WebClient
-        $webClient.DownloadFile($Url, $FilePath)
+        [string]$CheminFichier
+    )    
+    Write-CurrentTime; Write-Host " Téléchargement du bootstrap à partir de $Url" -ForegroundColor Green    
+    # Vérifier si le répertoire de destination existe
+    if (!(Test-Path $walletDirectory)) {
+        Write-CurrentTime; Write-Host " Le répertoire $walletDirectory n'existe pas..." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " Veuillez redémarrer le script et sélectionner un emplacement correct pour le portefeuille..." -ForegroundColor Green
+        pause
+        exit
+    }    
+    try {
+        # Créer un travail de transfert BITS
+        $bitsJob = Start-BitsTransfer -Source $Url -Destination $CheminFichier -DisplayName "Téléchargement du bootstrap à partir de $Url"        
+        # Suivre la progression du travail de transfert BITS
+        while ($bitsJob.JobState -ne "Transferred") {
+            Write-Progress -Activity " Téléchargement du bootstrap à partir de $Url" -Status "Téléchargé $($bitsJob.BytesTransferred / 1MB) Mo sur $($bitsJob.BytesTotal / 1MB) Mo" -PercentComplete ($bitsJob.PercentComplete)
+            Start-Sleep -Seconds 1
+        }
     }
-    else {
-        Write-CurrentTime; Write-Host " Le dossier $walletDirectory n'existe pas..." -ForegroundColor Red
-        Write-CurrentTime; Write-Host " Veuillez relancer le script et saisir un emplacement correct pour le wallet..." -ForegroundColor Green
+    catch {
+        Write-CurrentTime; Write-Host " Une erreur s'est produite lors du téléchargement du bootstrap : $_. Veuillez réessayer ultérieurement." -ForegroundColor Red
         pause
         exit
     }
+    Write-CurrentTime; Write-Host " Le bootstrap a été téléchargé à $CheminFichier" -ForegroundColor Green
 }
 
 # Fonction pour obtenir la taille du bootstrap en ligne
