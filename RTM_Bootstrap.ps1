@@ -95,26 +95,37 @@ function Check-BootstrapZip {
     }
 }
 
-# Function to download the bootstrap
+# Function to download the bootstrap with progress tracking
 function Download-FileWithProgress {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Url,
         [Parameter(Mandatory=$true)]
         [string]$FilePath
-    )
-    Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url" -ForegroundColor Green
-    # Check if the destination path exist
-    if (Test-Path $walletDirectory) {
-        $webClient = New-Object System.Net.WebClient
-        $webClient.DownloadFile($Url, $FilePath)
-    }
-    else {
-        Write-CurrentTime; Write-Host "The folder $walletDirectory does not exist..." -ForegroundColor Red
-        Write-CurrentTime; Write-Host "Please restart the script and select a correct location for the wallet..." -ForegroundColor Green
+    )    
+    Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url" -ForegroundColor Green    
+    # Check if the destination directory exists
+    if (!(Test-Path $walletDirectory)) {
+        Write-CurrentTime; Write-Host " The folder $walletDirectory does not exist..." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " Please restart the script and select a correct location for the wallet..." -ForegroundColor Green
         pause
         exit
+    }    
+    try {
+        # Create a BITS transfer job
+        $bitsJob = Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Downloading bootstrap from $Url"        
+        # Monitor the BITS transfer job progress
+        while ($bitsJob.JobState -ne "Transferred") {
+            Write-Progress -Activity " Downloading bootstrap from $Url" -Status "Downloaded $($bitsJob.BytesTransferred / 1MB) MB of $($bitsJob.BytesTotal / 1MB) MB" -PercentComplete ($bitsJob.PercentComplete)
+            Start-Sleep -Seconds 1
+        }
     }
+    catch {
+        Write-CurrentTime; Write-Host " An error occurred while downloading the bootstrap: $_. Please try again later." -ForegroundColor Red
+        pause
+        exit
+    }    
+    Write-CurrentTime; Write-Host " The bootstrap has been downloaded to $FilePath" -ForegroundColor Green
 }
 
 # Function to get the online bootstrap size
