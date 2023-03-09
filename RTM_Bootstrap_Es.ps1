@@ -95,26 +95,37 @@ function Check-BootstrapZip {
     }
 }
 
-# Función para descargar el bootstrap
+# Función para descargar el bootstrap con seguimiento de progreso
 function Descargar-ArchivoConProgreso {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Url,
         [Parameter(Mandatory=$true)]
-        [string]$FilePath
-    )
-    Write-CurrentTime; Write-Host " Descargando el bootstrap desde $Url" -ForegroundColor Green
-    # Verificar si la ruta de destino existe
-    if (Test-Path $walletDirectory) {
-        $webClient = New-Object System.Net.WebClient
-        $webClient.DownloadFile($Url, $FilePath)
-    }
-    else {
-        Write-CurrentTime; Write-Host "La carpeta $walletDirectory no existe..." -ForegroundColor Red
-        Write-CurrentTime; Write-Host "Por favor, vuelva a iniciar el script e introduzca una ubicación correcta para la billetera..." -ForegroundColor Green
+        [string]$RutaArchivo
+    )    
+    Write-CurrentTime; Write-Host " Descargando el bootstrap desde $Url" -ForegroundColor Green    
+    # Verificar si el directorio de destino existe
+    if (!(Test-Path $walletDirectory)) {
+        Write-CurrentTime; Write-Host " El directorio $walletDirectory no existe..." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " Por favor, reinicie el script y seleccione una ubicación correcta para la cartera..." -ForegroundColor Green
         pause
         exit
+    }    
+    try {
+        # Crear un trabajo de transferencia BITS
+        $bitsJob = Start-BitsTransfer -Source $Url -Destination $RutaArchivo -DisplayName "Descargando el bootstrap desde $Url"        
+        # Seguir el progreso del trabajo de transferencia BITS
+        while ($bitsJob.JobState -ne "Transferred") {
+            Write-Progress -Activity " Descargando el bootstrap desde $Url" -Status "Descargados $($bitsJob.BytesTransferred / 1MB) MB de $($bitsJob.BytesTotal / 1MB) MB" -PercentComplete ($bitsJob.PercentComplete)
+            Start-Sleep -Seconds 1
+        }
     }
+    catch {
+        Write-CurrentTime; Write-Host " Se produjo un error al descargar el bootstrap: $_. Por favor, inténtelo de nuevo más tarde." -ForegroundColor Red
+        pause
+        exit
+    }    
+    Write-CurrentTime; Write-Host " El bootstrap ha sido descargado a $RutaArchivo" -ForegroundColor Green
 }
 
 # Función para obtener el tamaño del bootstrap en lí­nea
