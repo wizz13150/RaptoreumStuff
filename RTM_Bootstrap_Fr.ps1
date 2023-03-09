@@ -95,7 +95,7 @@ function Check-BootstrapZip {
     }
 }
 
-# Fonction pour télécharger le bootstrap avec suivi de progression
+# Función para descargar el bootstrap con seguimiento de progreso
 function Download-FileWithProgress {
     param(
         [Parameter(Mandatory=$true)]
@@ -103,29 +103,29 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )    
-    Write-CurrentTime; Write-Host " Téléchargement du bootstrap à partir de $Url" -ForegroundColor Green    
-    # Vérifier si le répertoire de destination existe
+    Write-CurrentTime; Write-Host " Descargando el bootstrap desde $Url" -ForegroundColor Green    
+    # Verificar si el directorio de destino existe
     if (!(Test-Path $walletDirectory)) {
-        Write-CurrentTime; Write-Host " Le répertoire $walletDirectory n'existe pas..." -ForegroundColor Red
-        Write-CurrentTime; Write-Host " Veuillez redémarrer le script et sélectionner un emplacement correct pour le portefeuille..." -ForegroundColor Green
+        Write-CurrentTime; Write-Host " El directorio $walletDirectory no existe..." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " Por favor, reinicie el script y seleccione una ubicación correcta para la cartera..." -ForegroundColor Green
         pause
         exit
     }    
     try {
-        # Créer un travail de transfert BITS
-        $bitsJob = Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Téléchargement du bootstrap à partir de $Url"        
-        # Suivre la progression du travail de transfert BITS
+        # Crear un trabajo de transferencia BITS
+        $bitsJob = Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Descargando el bootstrap desde $Url"        
+        # Seguir el progreso del trabajo de transferencia BITS
         while ($bitsJob.JobState -ne "Transferred") {
-            Write-Progress -Activity " Téléchargement du bootstrap à partir de $Url" -Status "Téléchargé $($bitsJob.BytesTransferred / 1MB) Mo sur $($bitsJob.BytesTotal / 1MB) Mo" -PercentComplete ($bitsJob.PercentComplete)
+            Write-Progress -Activity " Descargando el bootstrap desde $Url" -Status "Descargados $($bitsJob.BytesTransferred / 1MB) MB de $($bitsJob.BytesTotal / 1MB) MB" -PercentComplete ($bitsJob.PercentComplete)
             Start-Sleep -Seconds 1
         }
     }
     catch {
-        Write-CurrentTime; Write-Host " Une erreur s'est produite lors du téléchargement du bootstrap : $_. Veuillez réessayer ultérieurement." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " Se produjo un error al descargar el bootstrap: $_. Por favor, inténtelo de nuevo más tarde." -ForegroundColor Red
         pause
         exit
-    }
-    Write-CurrentTime; Write-Host " Le bootstrap a été téléchargé à $FilePath" -ForegroundColor Green
+    }    
+    Write-CurrentTime; Write-Host " El bootstrap ha sido descargado a $FilePath" -ForegroundColor Green
 }
 
 
