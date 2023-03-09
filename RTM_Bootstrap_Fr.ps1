@@ -96,12 +96,12 @@ function Check-BootstrapZip {
 }
 
 # Fonction pour télécharger le bootstrap avec suivi de progression
-function Telecharger-FichierAvecProgression {
+function Download-FileWithProgress {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Url,
         [Parameter(Mandatory=$true)]
-        [string]$CheminFichier
+        [string]$FilePath
     )    
     Write-CurrentTime; Write-Host " Téléchargement du bootstrap à partir de $Url" -ForegroundColor Green    
     # Vérifier si le répertoire de destination existe
@@ -113,7 +113,7 @@ function Telecharger-FichierAvecProgression {
     }    
     try {
         # Créer un travail de transfert BITS
-        $bitsJob = Start-BitsTransfer -Source $Url -Destination $CheminFichier -DisplayName "Téléchargement du bootstrap à partir de $Url"        
+        $bitsJob = Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Téléchargement du bootstrap à partir de $Url"        
         # Suivre la progression du travail de transfert BITS
         while ($bitsJob.JobState -ne "Transferred") {
             Write-Progress -Activity " Téléchargement du bootstrap à partir de $Url" -Status "Téléchargé $($bitsJob.BytesTransferred / 1MB) Mo sur $($bitsJob.BytesTotal / 1MB) Mo" -PercentComplete ($bitsJob.PercentComplete)
@@ -125,8 +125,9 @@ function Telecharger-FichierAvecProgression {
         pause
         exit
     }
-    Write-CurrentTime; Write-Host " Le bootstrap a été téléchargé à $CheminFichier" -ForegroundColor Green
+    Write-CurrentTime; Write-Host " Le bootstrap a été téléchargé à $FilePath" -ForegroundColor Green
 }
+
 
 # Fonction pour obtenir la taille du bootstrap en ligne
 function Get-BootstrapSize {
