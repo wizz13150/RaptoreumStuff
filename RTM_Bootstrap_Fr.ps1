@@ -113,12 +113,7 @@ function Download-FileWithProgress {
     }    
     try {
         # Créer un travail de transfert BITS
-        $bitsJob = Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Téléchargement du bootstrap à partir de $Url"        
-        # Suivre la progression du travail de transfert BITS
-        while ($bitsJob.JobState -ne "Transferred") {
-            Write-Progress -Activity " Téléchargement du bootstrap à partir de $Url" -Status "Téléchargé $($bitsJob.BytesTransferred / 1MB) Mo sur $($bitsJob.BytesTotal / 1MB) Mo" -PercentComplete ($bitsJob.PercentComplete)
-            Start-Sleep -Seconds 1
-        }
+        $bitsJob = Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Téléchargement du bootstrap à partir de $Url"
     }
     catch {
         Write-CurrentTime; Write-Host " Une erreur s'est produite lors du téléchargement du bootstrap : $_. Veuillez réessayer ultérieurement." -ForegroundColor Red
