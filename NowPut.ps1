@@ -109,10 +109,10 @@ while (-not [decimal]::TryParse($betAmount, [ref][decimal]0) -or [decimal]$betAm
 Write-Host "You have chosen to bet $betAmount trtm..." -ForegroundColor Green
 
 # Prompt the user to enter how many bets they want to execute
-[int]$numBets = Read-Host "How many bets would you like to execute? (1-100)"
-while ($numBets -lt 1 -or $numBets -gt 100) {
-    Write-Host "Invalid number of bets entered. Please enter a number between 1 and 100..." -ForegroundColor Yellow
-    [int]$numBets = Read-Host "How many bets would you like to execute? (1-100)"
+[int]$numBets = Read-Host "How many bets would you like to execute? (1-10)"
+while ($numBets -lt 1 -or $numBets -gt 10) {
+    Write-Host "Invalid number of bets entered. Please enter a number between 1 and 10..." -ForegroundColor Yellow
+    [int]$numBets = Read-Host "How many bets would you like to execute? (1-10)"
 }
 
 
