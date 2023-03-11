@@ -36,3 +36,11 @@ Screenshot :
 ![image](https://user-images.githubusercontent.com/22177081/223608627-fadb985e-4757-4aff-9d24-acc4d43e482d.png)
 
 
+-----------------------------------
+
+Nowput.ps1 Screenshot :
+
+
+![image](https://user-images.githubusercontent.com/22177081/224513145-19107bc6-dab1-4e9d-9785-f64e384b3498.png)
+
+
