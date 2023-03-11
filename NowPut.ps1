@@ -159,3 +159,4 @@ foreach ($transactionID in $transactionIDs) {
         Write-Host "Unexpected status value for transaction ID $transactionID : $status" -ForegroundColor Yellow
     }
 }
+pause
