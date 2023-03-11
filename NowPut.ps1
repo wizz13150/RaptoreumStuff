@@ -1,4 +1,4 @@
-﻿########################################################
+########################################################
 ### Script to create transactions for nowput.finance ###
 ####### Just insert the transaction id in the ##########
 ######### Tracking section of nowput.finance ###########
@@ -109,10 +109,10 @@ while (-not [decimal]::TryParse($betAmount, [ref][decimal]0) -or [decimal]$betAm
 Write-Host "You have chosen to bet $betAmount trtm..." -ForegroundColor Green
 
 # Prompt the user to enter how many bets they want to execute
-[int]$numBets = Read-Host "How many bets would you like to execute? (1-10)"
-while ($numBets -lt 1 -or $numBets -gt 10) {
-    Write-Host "Invalid number of bets entered. Please enter a number between 1 and 10..." -ForegroundColor Yellow
-    [int]$numBets = Read-Host "How many bets would you like to execute? (1-10)"
+[int]$numBets = Read-Host "How many bets would you like to execute? (1-100)"
+while ($numBets -lt 1 -or $numBets -gt 100) {
+    Write-Host "Invalid number of bets entered. Please enter a number between 1 and 100..." -ForegroundColor Yellow
+    [int]$numBets = Read-Host "How many bets would you like to execute? (1-100)"
 }
 
 
@@ -137,7 +137,7 @@ $transactionIDs += $transactionID
 }
 
 # Check the bet result for each transaction ID
-Write-Host "Let's track the results (Check every 20 seconds)..." -ForegroundColor Green
+Write-Host "Let's track the results..." -ForegroundColor Green
 foreach ($transactionID in $transactionIDs) {
     $url = "https://ap1.nowput.finance/Hedge?txid=$transactionID"
     $status = $null
@@ -145,8 +145,6 @@ foreach ($transactionID in $transactionIDs) {
         $response = Invoke-WebRequest $url
         $content = $response.Content
         $status = $content | Select-String -Pattern '"status":"([^"]+)"' | ForEach-Object { $_.Matches.Groups[1].Value }
-        Write-Host "Not yet ! Sleep..." -ForegroundColor Yellow
-        Start-Sleep -Seconds 20
     }
     # Print the result of the bet for each transaction ID
     if ($status -eq "HOUSE_WIN") {
