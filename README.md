@@ -14,6 +14,10 @@ Just run the .bat and answer the questions if you're using custom folders.
 
 -----------------------------------
 
+If it's a fresh installation, be sure to launch Raptoreum Core once, before running this script. A wallet folder need to exist.
+
+-----------------------------------
+
 Check the latest versions of RaptoreumCore on github, the latest bootstrap on bootstrap.raptoreum.com, with links to download.
 
 Will apply the last bootstrap (no index) available to your wallet, be sure to run the last RaptoreumCore release version. 
