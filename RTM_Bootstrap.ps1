@@ -190,6 +190,29 @@ $bootstrapVersion = [regex]::Matches($checksums, '\d+\.\d+\.\d+\.\d+').Value | S
 Write-CurrentTime; Write-Host " Last Bootstrap version available     : $bootstrapVersion" -ForegroundColor Green
 Write-CurrentTime; Write-Host " Download link: https://bootstrap.raptoreum.com/bootstraps/bootstrap.zip" -ForegroundColor Green
 
+# Ask if using the default wallet location
+$customPath = Read-Host " Is your RaptoreumCore wallet folder using the default location ?`n (Press enter if you don't know) (y/n)"
+if ($customPath.ToLower() -eq "n") {
+    # Ask for a custom directory, if raptoreum-qt.exe not found in default location
+    $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
+    $customDialog.Description = "Select the path to your custom RaptoreumCore wallet folder"
+    $customDialog.ShowDialog() | Out-Null
+    if ($customDialog.SelectedPath) {
+        # Change variables from default location to the custon wallet forlder
+        [string]$walletDirectory = $customDialog.SelectedPath
+        [string]$bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
+        [string]$blocksDirectory = "$($customDialog.SelectedPath)\blocks"
+        [string]$chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
+        [string]$evodbDirectory = "$($customDialog.SelectedPath)\evodb"
+        [string]$llmqDirectory = "$($customDialog.SelectedPath)\llmq"
+        [string]$powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
+        Write-CurrentTime; Write-Host " Your custom wallet folder is: '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
+        Write-CurrentTime; Write-Host " Using this directory for the bootstrap.zip" -ForegroundColor Green
+    } else {
+        Write-CurrentTime; Write-Host " Custom wallet location not found, but continuing with default location..." -ForegroundColor Yellow
+    }
+}
+
 # Ask is the wallet is correctly updated to the required version
 if (-not ($coreVersion -eq $latestVersion)) {
     $answer = Read-Host " Your version differ from the latest available.`n Do you want to update RaptoreumCore to version $($latestVersion) ? (y/n)"
@@ -220,29 +243,6 @@ if (-not ($coreVersion -eq $latestVersion)) {
             Write-CurrentTime; Write-Host " The version appears to be incorrect, we will proceed but you may encounter an error when launching." -ForegroundColor Yellow
             Write-CurrentTime; Write-Host " Download link: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
         }
-    }
-}
-
-# Ask if using the default wallet location
-$customPath = Read-Host " Is your RaptoreumCore wallet folder using the default location ?`n (Press enter if you don't know) (y/n)"
-if ($customPath.ToLower() -eq "n") {
-    # Ask for a custom directory, if raptoreum-qt.exe not found in default location
-    $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
-    $customDialog.Description = "Select the path to your custom RaptoreumCore wallet folder"
-    $customDialog.ShowDialog() | Out-Null
-    if ($customDialog.SelectedPath) {
-        # Change variables from default location to the custon wallet forlder
-        [string]$walletDirectory = $customDialog.SelectedPath
-        [string]$bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
-        [string]$blocksDirectory = "$($customDialog.SelectedPath)\blocks"
-        [string]$chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
-        [string]$evodbDirectory = "$($customDialog.SelectedPath)\evodb"
-        [string]$llmqDirectory = "$($customDialog.SelectedPath)\llmq"
-        [string]$powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
-        Write-CurrentTime; Write-Host " Your custom wallet folder is: '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
-        Write-CurrentTime; Write-Host " Using this directory for the bootstrap.zip" -ForegroundColor Green
-    } else {
-        Write-CurrentTime; Write-Host " Custom wallet location not found, but continuing with default location..." -ForegroundColor Yellow
     }
 }
 
