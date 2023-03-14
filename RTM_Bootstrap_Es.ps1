@@ -54,7 +54,6 @@ function Check-BootstrapZipChecksum {
 # Función para obtener la versión de raptoreum-qt.exe
 function Get-FileVersion {
     param (
-        [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
     $fileVersionInfo = Get-Item $FilePath -ErrorAction SilentlyContinue| Get-ItemProperty | Select-Object -ExpandProperty VersionInfo
@@ -98,9 +97,7 @@ function Check-BootstrapZip {
 # Función para descargar el archivo con seguimiento de progreso
 function Download-FileWithProgress {
     param(
-        [Parameter(Mandatory=$true)]
         [string]$Url,
-        [Parameter(Mandatory=$true)]
         [string]$FilePath
     )    
     Write-CurrentTime; Write-Host " Descargando el archivo desde $Url" -ForegroundColor Green    
@@ -267,6 +264,11 @@ $walletProcess = Get-Process -Name $walletProcessName -ErrorAction SilentlyConti
 if ($walletProcess) {
     Write-CurrentTime; Write-Host " Deteniendo el proceso RaptoreumCore en ejecución..." -ForegroundColor Yellow
     Stop-Process $walletProcess.Id -Force
+    do {
+        Start-Sleep -Milliseconds 500
+        $walletProcess = Get-Process -Name $walletProcessName -ErrorAction SilentlyContinue
+    } while ($walletProcess)
+    Write-CurrentTime; Write-Host " El proceso de Raptoreum Core ha sido terminado..." -ForegroundColor Green
 } else {
     Write-CurrentTime; Write-Host " No se ha detectado ningún proceso RaptoreumCore..." -ForegroundColor Green
 }
@@ -299,11 +301,9 @@ if (Test-Path $bootstrapZipPath) {
     Write-CurrentTime; Write-Host " Extrayendo bootstrap desde: $bootstrapZipPath..." -ForegroundColor Green
     Write-CurrentTime; Write-Host " Extrayendo bootstrap a    : $walletDirectory..." -ForegroundColor Green
     $zipProgram = $null
-    if (Test-Path (Join-Path $env:ProgramFiles "7-zip\7z.exe")) {
-        $zipProgram = (Join-Path $env:ProgramFiles "7-zip\7z.exe")
-    }
-    if (Test-Path (Join-Path ${Env:ProgramFiles(x86)} "7-Zip\7z.exe")) {
-        $zipProgram = (Join-Path ${Env:ProgramFiles(x86)} "7-zip\7z.exe")
+    $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
+    if (Test-Path $7zipKey) {
+        $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
     }
     if ($zipProgram) {
         Write-CurrentTime; Write-Host " 7-Zip detectado, usando 7-Zip para extraer el bootstrap. Más rápido..." -ForegroundColor Green
