@@ -186,34 +186,30 @@ Write-CurrentTime; Write-Host " Enlace de descarga: https://bootstrap.raptoreum.
 
 # Preguntar si la billetera está actualizada correctamente a la versión requerida
 if (-not ($coreVersion -eq $latestVersion)) {
-    $answer = Read-Host " Su versión es diferente de la última disponible.`n Ha actualizado RaptoreumCore a la versión $($latestVersion)? (s/n)"
-    if ($answer.ToLower() -ne "s") {
-        # Preguntar si se debe descargar e instalar la última versión disponible de RaptoreumCore
-        $dlanswer = Read-Host " Desea actualizar RaptoreumCore a la versión $($latestVersion)? (o/n)"
-        if ($dlanswer.ToLower() -eq "o") {
-            $downloadUrl = "https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
-            Write-CurrentTime; Write-Host " Descargando la versión $latestVersion de RaptoreumCore..." -ForegroundColor Green            
-            # Descargar el archivo ZIP
-            $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
-            Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
-            # Descomprimir el archivo ZIP
-            Write-CurrentTime; Write-Host " Descomprimiendo el archivo en $corePath..."
-            try {
-                Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
-                # Eliminar el archivo ZIP después de la descompresión
-                #Write-CurrentTime; Write-Host " Eliminando el archivo descargado..."
-                #Remove-Item $zipFilePath
-            }
-            catch [System.UnauthorizedAccessException] {
-                Write-CurrentTime; Write-Host " El script no tiene los permisos necesarios para acceder a la carpeta $core..." -ForegroundColor Red
-                Write-CurrentTime; Write-Host " Vuelva a ejecutar el script como administrador..." -ForegroundColor Green
-                pause
-                exit
-            }
-            catch {
-                # En caso de error que no sean los permisos, mostrar el mensaje de error
-                Write-CurrentTime; Write-Host " Se produjo un error al descomprimir el archivo: $_. Pero seguimos..." -ForegroundColor Yellow
-            }
+    $answer = Read-Host " Su versión es diferente de la última disponible.`n Desea actualizar RaptoreumCore a la versión $($latestVersion) ? (s/n)"
+    if ($dlanswer.ToLower() -eq "o") {
+        $downloadUrl = "https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
+        Write-CurrentTime; Write-Host " Descargando la versión $latestVersion de RaptoreumCore..." -ForegroundColor Green            
+        # Descargar el archivo ZIP
+        $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
+        Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
+        # Descomprimir el archivo ZIP
+        Write-CurrentTime; Write-Host " Descomprimiendo el archivo en $corePath..."
+        try {
+            Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
+            # Eliminar el archivo ZIP después de la descompresión
+            #Write-CurrentTime; Write-Host " Eliminando el archivo descargado..."
+            #Remove-Item $zipFilePath
+        }
+        catch [System.UnauthorizedAccessException] {
+            Write-CurrentTime; Write-Host " El script no tiene los permisos necesarios para acceder a la carpeta $core..." -ForegroundColor Red
+            Write-CurrentTime; Write-Host " Vuelva a ejecutar el script como administrador..." -ForegroundColor Green
+            pause
+            exit
+        }
+        catch {
+            # En caso de error que no sean los permisos, mostrar el mensaje de error
+            Write-CurrentTime; Write-Host " Se produjo un error al descomprimir el archivo: $_. Pero seguimos..." -ForegroundColor Yellow
         }
     }
     else {
