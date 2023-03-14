@@ -199,7 +199,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
             # Décompresser le fichier ZIP
             Write-CurrentTime; Write-Host " Décompresion de l'archive vers $corePath..."
             try {
-                Expand-Archive -Path $downloadZipPath -DestinationPath $core -ErrorAction Stop
+                Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
                 # Supprimer le fichier ZIP après la décompression
                 #Write-CurrentTime; Write-Host " Suppression de l'archive téléchargée..."
                 #Remove-Item $zipFilePath
