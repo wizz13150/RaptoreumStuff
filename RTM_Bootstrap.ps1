@@ -133,12 +133,25 @@ function Get-BootstrapSize {
 }
 
 # Checking the current and the latest versions available
+
+# Get latest version number of RaptoreumCore available, from github
+$uri = "https://api.github.com/repos/Raptor3um/raptoreum/releases/latest"
+$response = Invoke-RestMethod -Uri $uri
+$latestVersion = $response.tag_name
+Write-CurrentTime; Write-Host " Last RaptoreumCore version available : $latestVersion" -ForegroundColor Green
+Write-CurrentTime; Write-Host " Download link: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
+
 # Check current version on the computer, if default folder
 $corePath = "$env:ProgramFiles\RaptoreumCore\raptoreum-qt.exe"
 $core = "$env:ProgramFiles\RaptoreumCore"
 if (Test-Path $corePath) {
     $coreVersion = Get-FileVersion $corePath
-    Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : $coreVersion" -ForegroundColor Green
+    if ($coreVersion -ne $latestVersion) {
+        Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : $coreVersion" -ForegroundColor Yellow
+    } 
+    else {
+        Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : $coreVersion" -ForegroundColor Green
+    }
 }
 else {
     Write-CurrentTime; Write-Host " Your RaptoreumCore version is        : Not found" -ForegroundColor Yellow
@@ -169,13 +182,6 @@ else {
         Write-CurrentTime; Write-Host " Your RaptoreumCore version was not found, but continuing..." -ForegroundColor Yellow
     }
 }
-
-# Get latest version number of RaptoreumCore available, from github
-$uri = "https://api.github.com/repos/Raptor3um/raptoreum/releases/latest"
-$response = Invoke-RestMethod -Uri $uri
-$latestVersion = $response.tag_name
-Write-CurrentTime; Write-Host " Last RaptoreumCore version available : $latestVersion" -ForegroundColor Green
-Write-CurrentTime; Write-Host " Download link: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
 
 # Get latest version number of the bootstrap available, from checksums
 $checksumsUrl = "https://checksums.raptoreum.com/checksums/bootstrap-checksums.txt"
