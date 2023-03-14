@@ -190,6 +190,29 @@ $bootstrapVersion = [regex]::Matches($checksums, '\d+\.\d+\.\d+\.\d+').Value | S
 Write-CurrentTime; Write-Host " Ultima versión disponible del bootstrap   : $bootstrapVersion" -ForegroundColor Green
 Write-CurrentTime; Write-Host " Enlace de descarga: https://bootstrap.raptoreum.com/bootstraps/bootstrap.zip" -ForegroundColor Green
 
+# Preguntar si se está utilizando la ubicación de la billetera predeterminada
+$customPath = Read-Host " Está utilizando la carpeta de la billetera Raptoreum en la ubicación predeterminada?`n (Presione enter si no lo sabe) (s/n)"
+if ($customPath.ToLower() -eq "n") {
+    # Pedir un directorio personalizado, si no se encuentra raptoreum-qt.exe en la ubicación predeterminada
+    $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
+    $customDialog.Description = "Seleccione la ruta de su carpeta de billetera Raptoreum personalizada"
+    $customDialog.ShowDialog() | Out-Null
+    if ($customDialog.SelectedPath) {
+        # Cambiar las variables de la ubicación predeterminada a la carpeta de billetera personalizada
+        [string]$walletDirectory = $customDialog.SelectedPath
+        [string]$bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
+        [string]$blocksDirectory = "$($customDialog.SelectedPath)\blocks"
+        [string]$chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
+        [string]$evodbDirectory = "$($customDialog.SelectedPath)\evodb"
+        [string]$llmqDirectory = "$($customDialog.SelectedPath)\llmq"
+        [string]$powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
+        Write-CurrentTime; Write-Host " Su carpeta de billetera personalizada es: '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
+        Write-CurrentTime; Write-Host " Utilizando este directorio para el archivo bootstrap.zip" -ForegroundColor Green
+    } else {
+        Write-CurrentTime; Write-Host " No se encontró la ubicación personalizada de la billetera, pero continúe con la ubicación predeterminada..." -ForegroundColor Yellow
+    }
+}
+
 # Preguntar si la billetera está actualizada correctamente a la versión requerida
 if (-not ($coreVersion -eq $latestVersion)) {
     $answer = Read-Host " Su versión es diferente de la última disponible.`n Desea actualizar RaptoreumCore a la versión $($latestVersion) ? (s/n)"
@@ -220,29 +243,6 @@ if (-not ($coreVersion -eq $latestVersion)) {
             Write-CurrentTime; Write-Host " La versión parece ser incorrecta, continuaremos pero es posible que encuentre un error al iniciar." -ForegroundColor Yellow
             Write-CurrentTime; Write-Host " Enlace de descarga: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
         }
-    }
-}
-
-# Preguntar si se está utilizando la ubicación de la billetera predeterminada
-$customPath = Read-Host " Está utilizando la carpeta de la billetera Raptoreum en la ubicación predeterminada?`n (Presione enter si no lo sabe) (s/n)"
-if ($customPath.ToLower() -eq "n") {
-    # Pedir un directorio personalizado, si no se encuentra raptoreum-qt.exe en la ubicación predeterminada
-    $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
-    $customDialog.Description = "Seleccione la ruta de su carpeta de billetera Raptoreum personalizada"
-    $customDialog.ShowDialog() | Out-Null
-    if ($customDialog.SelectedPath) {
-        # Cambiar las variables de la ubicación predeterminada a la carpeta de billetera personalizada
-        [string]$walletDirectory = $customDialog.SelectedPath
-        [string]$bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
-        [string]$blocksDirectory = "$($customDialog.SelectedPath)\blocks"
-        [string]$chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
-        [string]$evodbDirectory = "$($customDialog.SelectedPath)\evodb"
-        [string]$llmqDirectory = "$($customDialog.SelectedPath)\llmq"
-        [string]$powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
-        Write-CurrentTime; Write-Host " Su carpeta de billetera personalizada es: '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
-        Write-CurrentTime; Write-Host " Utilizando este directorio para el archivo bootstrap.zip" -ForegroundColor Green
-    } else {
-        Write-CurrentTime; Write-Host " No se encontró la ubicación personalizada de la billetera, pero continúe con la ubicación predeterminada..." -ForegroundColor Yellow
     }
 }
 
