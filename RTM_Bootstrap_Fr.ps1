@@ -199,7 +199,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
             # Décompresser le fichier ZIP
             Write-CurrentTime; Write-Host " Décompresion de l'archive vers $corePath..."
             try {
-                Expand-Archive -Path $downloadZipPath -DestinationPath $corePath -ErrorAction Stop
+                Expand-Archive -Path $downloadZipPath -DestinationPath $core -ErrorAction Stop
                 # Supprimer le fichier ZIP après la décompression
                 #Write-CurrentTime; Write-Host " Suppression de l'archive téléchargée..."
                 #Remove-Item $zipFilePath
@@ -315,14 +315,12 @@ if (Test-Path $bootstrapZipPath) {
     }
 } else {
     Write-CurrentTime; Write-Host " Aucun fichier 'bootstrap.zip' détecté dans le répertoire du portefeuille." -ForegroundColor Yellow
-    Get-BootstrapSize
-    $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ?`n (Appuyez sur Entrée si vous ne savez pas) (o/n)"
-    if ($confirmDownload.ToLower() -eq "n") {
-        Write-CurrentTime; Write-Host " On ne télécharge pas le fichier bootstrap.zip, mais on continue..." -ForegroundColor Yellow
-    } else {
-        Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
-        Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
-    }
+    Do {
+        Get-BootstrapSize
+        $confirmDownload = Read-Host " Voulez-vous télécharger le fichier bootstrap.zip ?`n (Il faut dire oui...) (o/n)"
+    } Until ($confirmDownload.ToLower() -eq "o")
+    Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
+    Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
 }
 
 # Afficher un message de fin
