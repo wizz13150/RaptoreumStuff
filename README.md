@@ -14,7 +14,7 @@ Just run the .bat and answer the questions if you're using custom folders.
 
 -----------------------------------
 
-If it's a fresh installation, be sure to launch Raptoreum Core once, before running this script. A wallet folder need to exist.
+If it's a fresh installation, be sure to launch Raptoreum Core once, before running this script. A wallet folder must already exist.
 
 -----------------------------------
 
