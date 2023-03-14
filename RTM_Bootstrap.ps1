@@ -95,7 +95,7 @@ function Check-BootstrapZip {
     }
 }
 
-# Function to download the bootstrap with progress tracking
+# Function to download the file with progress tracking
 function Download-FileWithProgress {
     param(
         [Parameter(Mandatory=$true)]
@@ -103,7 +103,7 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )    
-    Write-CurrentTime; Write-Host " Downloading the bootstrap from $Url" -ForegroundColor Green    
+    Write-CurrentTime; Write-Host " Downloading the file from $Url" -ForegroundColor Green    
     # Check if the destination directory exists
     if (!(Test-Path $walletDirectory)) {
         Write-CurrentTime; Write-Host " The folder $walletDirectory does not exist..." -ForegroundColor Red
@@ -113,14 +113,14 @@ function Download-FileWithProgress {
     }    
     try {
         # Create a BITS transfer job
-        Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Downloading bootstrap from $Url"
+        Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Downloading file from $Url"
     }
     catch {
-        Write-CurrentTime; Write-Host " An error occurred while downloading the bootstrap: $_. Please try again later." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " An error occurred while downloading the file: $_. Please try again later." -ForegroundColor Red
         pause
         exit
     }    
-    Write-CurrentTime; Write-Host " The bootstrap has been downloaded to $FilePath" -ForegroundColor Green
+    Write-CurrentTime; Write-Host " The file has been downloaded to $FilePath" -ForegroundColor Green
 }
 
 # Function to get the online bootstrap size
