@@ -207,22 +207,18 @@ if (-not ($coreVersion -eq $latestVersion)) {
             #Write-CurrentTime; Write-Host " Eliminando el archivo descargado..."
             #Remove-Item $zipFilePath
         }
-        catch [System.UnauthorizedAccessException] {
+        catch {
             Write-CurrentTime; Write-Host " El script no tiene los permisos necesarios para acceder a la carpeta $core..." -ForegroundColor Red
             Write-CurrentTime; Write-Host " Vuelva a ejecutar el script como administrador..." -ForegroundColor Green
             pause
             exit
         }
-        catch {
-            # En caso de error que no sean los permisos, mostrar el mensaje de error
-            Write-CurrentTime; Write-Host " Se produjo un error al descomprimir el archivo: $_. Pero seguimos..." -ForegroundColor Yellow
-        }
     }
     else {
         # Verificar la versión una última vez y pedir que se actualice con un enlace
         if (-not ($coreVersion -eq $latestVersion)) {
-            Write-CurrentTime; Write-Host "La versión parece ser incorrecta, continuaremos pero es posible que encuentre un error al iniciar." -ForegroundColor Yellow
-            Write-CurrentTime; Write-Host "Enlace de descarga: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
+            Write-CurrentTime; Write-Host " La versión parece ser incorrecta, continuaremos pero es posible que encuentre un error al iniciar." -ForegroundColor Yellow
+            Write-CurrentTime; Write-Host " Enlace de descarga: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
         }
     }
 }
