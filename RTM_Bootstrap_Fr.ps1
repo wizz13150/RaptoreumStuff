@@ -186,34 +186,30 @@ Write-CurrentTime; Write-Host " Lien de téléchargement : https://bootstrap.rap
 
 # Demander si le portefeuille est correctement mis à jour vers la version requise
 if (-not ($coreVersion -eq $latestVersion)) {
-    $answer = Read-Host " Votre version diffère de la dernière version disponible.`n Avez-vous mis à jour RaptoreumCore vers la version $($latestVersion) ? (o/n)"
-    if ($answer.ToLower() -ne "o") {
-        # Demander si il faut télécharger et installer la dernière version de RaptoreumCore disponible
-        $dlanswer = Read-Host " Voulez-vous mettre à jour RaptoreumCore vers la version $($latestVersion) ? (o/n)"
-        if ($dlanswer.ToLower() -eq "o") {
-            $downloadUrl = "https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
-            Write-CurrentTime; Write-Host " Téléchargement de la version $latestVersion de RaptoreumCore..." -ForegroundColor Green            
-            # Télécharger le fichier ZIP
-            $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
-            Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
-            # Décompresser le fichier ZIP
-            Write-CurrentTime; Write-Host " Décompresion de l'archive vers $corePath..."
-            try {
-                Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
-                # Supprimer le fichier ZIP après la décompression
-                #Write-CurrentTime; Write-Host " Suppression de l'archive téléchargée..."
-                #Remove-Item $zipFilePath
-            }
-            catch [System.UnauthorizedAccessException] {
-                Write-CurrentTime; Write-Host " Le script n'a pas les droits nécessaires pour accéder au dossier $core..." -ForegroundColor Red
-                Write-CurrentTime; Write-Host " Veuillez relancer le script en mode administrateur..." -ForegroundColor Green
-                pause
-                exit
-            }
-            catch {
-                # En cas d'erreur autre que les autorisations, afficher le message d'erreur
-                Write-CurrentTime; Write-Host " Une erreur s'est produite lors de la décompression de l'archive : $_. Mais on continue..." -ForegroundColor Yellow
-            }
+    $answer = Read-Host " Votre version diffère de la dernière version disponible.`n Voulez-vous mettre à jour RaptoreumCore vers la version $($latestVersion) ? (o/n)"
+    if ($answer.ToLower() -eq "o") {
+        $downloadUrl = "https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
+        Write-CurrentTime; Write-Host " Téléchargement de la version $latestVersion de RaptoreumCore..." -ForegroundColor Green            
+        # Télécharger le fichier ZIP
+        $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
+        Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
+        # Décompresser le fichier ZIP
+        Write-CurrentTime; Write-Host " Décompresion de l'archive vers $corePath..."
+        try {
+            Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
+            # Supprimer le fichier ZIP après la décompression
+            #Write-CurrentTime; Write-Host " Suppression de l'archive téléchargée..."
+            #Remove-Item $zipFilePath
+        }
+        catch [System.UnauthorizedAccessException] {
+            Write-CurrentTime; Write-Host " Le script n'a pas les droits nécessaires pour accéder au dossier $core..." -ForegroundColor Red
+            Write-CurrentTime; Write-Host " Veuillez relancer le script en mode administrateur..." -ForegroundColor Green
+            pause
+            exit
+        }
+        catch {
+            # En cas d'erreur autre que les autorisations, afficher le message d'erreur
+            Write-CurrentTime; Write-Host " Une erreur s'est produite lors de la décompression de l'archive : $_. Mais on continue..." -ForegroundColor Yellow
         }
     }
     else {
