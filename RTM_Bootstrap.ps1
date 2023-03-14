@@ -229,6 +229,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
             # Remove the ZIP file after extraction
             #Write-CurrentTime; Write-Host "Removing downloaded archive..."
             #Remove-Item $zipFilePath
+            Write-CurrentTime; Write-Host " RaptoreumCore $latestVersion has been installed..." -ForegroundColor Green
         }
         catch {
             Write-CurrentTime; Write-Host " The script does not have sufficient rights to access the $core directory..." -ForegroundColor Red
