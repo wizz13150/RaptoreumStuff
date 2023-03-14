@@ -133,15 +133,28 @@ function Get-BootstrapSize {
 }
 
 # Vérification des versions actuelle et disponible
+
+# Obtenir le numéro de la version la plus récente de RaptoreumCore disponible, depuis github
+$uri = "https://api.github.com/repos/Raptor3um/raptoreum/releases/latest"
+$response = Invoke-RestMethod -Uri $uri
+$latestVersion = $response.tag_name
+Write-CurrentTime; Write-Host " Dernière version de RaptoreumCore disponible : $latestVersion" -ForegroundColor Green
+Write-CurrentTime; Write-Host " Lien de téléchargement : https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
+
 # Vérifie la version actuelle sur l'ordinateur, si dans le dossier par défaut
 $corePath = "$env:ProgramFiles\RaptoreumCore\raptoreum-qt.exe"
 $core = "$env:ProgramFiles\RaptoreumCore"
 if (Test-Path $corePath) {
     $coreVersion = Get-FileVersion $corePath
-    Write-CurrentTime; Write-Host " Votre version de RaptoreumCore est           : $coreVersion" -ForegroundColor Green
+    if ($coreVersion -ne $latestVersion) {
+        Write-CurrentTime; Write-Host " Votre version de RaptoreumCore est           : $coreVersion" -ForegroundColor Yellow
+    }
+    else {
+        Write-CurrentTime; Write-Host " Votre version de RaptoreumCore est           : $coreVersion" -ForegroundColor Green
+    }
 }
 else {
-    Write-CurrentTime; Write-Host " Votre version de RaptoreumCore n'a pas été trouvée" -ForegroundColor Yellow
+    Write-CurrentTime; Write-Host " Votre version de RaptoreumCore est           : Non trouvée" -ForegroundColor Yellow
     # Demander s'il y a un emplacement personnalisé ou non
     $answer = Read-Host " Avez-vous besoin de sélectionner un répertoire personnalisé pour votre lanceur RaptoreumCore ? (o/n)"
     if ($answer.ToLower() -eq "o") {
@@ -169,13 +182,6 @@ else {
         Write-CurrentTime; Write-Host " Votre version de RaptoreumCore n'a pas été trouvée, mais on continue..." -ForegroundColor Yellow
     }
 }
-
-# Obtenir le numéro de la version la plus récente de RaptoreumCore disponible, depuis github
-$uri = "https://api.github.com/repos/Raptor3um/raptoreum/releases/latest"
-$response = Invoke-RestMethod -Uri $uri
-$latestVersion = $response.tag_name
-Write-CurrentTime; Write-Host " Dernière version de RaptoreumCore disponible : $latestVersion" -ForegroundColor Green
-Write-CurrentTime; Write-Host " Lien de téléchargement : https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
 
 # Obtenir le numéro de la version la plus récente du bootstrap disponible, depuis la page des checksums
 $checksumsUrl = "https://checksums.raptoreum.com/checksums/bootstrap-checksums.txt"
