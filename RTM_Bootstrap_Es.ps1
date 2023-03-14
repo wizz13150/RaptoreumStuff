@@ -133,12 +133,25 @@ function Get-BootstrapSize {
 }
 
 # Verificar la versión actual y la última disponible
+
+# Obtener el número de la última versión disponible de RaptoreumCore, desde github
+$uri = "https://api.github.com/repos/Raptor3um/raptoreum/releases/latest"
+$response = Invoke-RestMethod -Uri $uri
+$latestVersion = $response.tag_name
+Write-CurrentTime; Write-Host " íšltima versión disponible de RaptoreumCore: $latestVersion" -ForegroundColor Green
+Write-CurrentTime; Write-Host " Enlace de descarga: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
+
 # Verificar la versión actual en el equipo, si la carpeta predeterminada
 $corePath = "$env:ProgramFiles\RaptoreumCore\raptoreum-qt.exe"
 $core = "$env:ProgramFiles\RaptoreumCore"
 if (Test-Path $corePath) {
     $coreVersion = Get-FileVersion $corePath
-    Write-CurrentTime; Write-Host " Su versión de RaptoreumCore es            : $coreVersion" -ForegroundColor Green
+    if ($coreVersion -ne $latestVersion) {
+        Write-CurrentTime; Write-Host " Su versión de RaptoreumCore es           : $coreVersion" -ForegroundColor Yellow
+    }
+    else {
+        Write-CurrentTime; Write-Host " Su versión de RaptoreumCore es           : $coreVersion" -ForegroundColor Green
+    }
 }
 else {
     Write-CurrentTime; Write-Host " Su versión de RaptoreumCore es            : No encontrada" -ForegroundColor Yellow
@@ -169,13 +182,6 @@ else {
         Write-CurrentTime; Write-Host " Su versión de RaptoreumCore no se encontró, pero continúa..." -ForegroundColor Yellow
     }
 }
-
-# Obtener el número de la última versión disponible de RaptoreumCore, desde github
-$uri = "https://api.github.com/repos/Raptor3um/raptoreum/releases/latest"
-$response = Invoke-RestMethod -Uri $uri
-$latestVersion = $response.tag_name
-Write-CurrentTime; Write-Host " íšltima versión disponible de RaptoreumCore: $latestVersion" -ForegroundColor Green
-Write-CurrentTime; Write-Host " Enlace de descarga: https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
 
 # Obtener el número de la última versión del bootstrap disponible, desde checksums
 $checksumsUrl = "https://checksums.raptoreum.com/checksums/bootstrap-checksums.txt"
