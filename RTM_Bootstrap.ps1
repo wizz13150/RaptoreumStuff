@@ -186,34 +186,30 @@ Write-CurrentTime; Write-Host " Download link: https://bootstrap.raptoreum.com/b
 
 # Ask is the wallet is correctly updated to the required version
 if (-not ($coreVersion -eq $latestVersion)) {
-    $answer = Read-Host " Your version differ from the latest available.`n Have you updated RaptoreumCore to version $($latestVersion) ? (y/n)"
-    if ($answer.ToLower() -ne "y") {
-        # Ask if the latest version of RaptoreumCore should be downloaded and installed
-        $dlanswer = Read-Host "Do you want to update RaptoreumCore to version $($latestVersion)? (y/n)"
-        if ($dlanswer.ToLower() -eq "y") {
-            $downloadUrl = "https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
-            Write-CurrentTime; Write-Host "Downloading RaptoreumCore version $latestVersion..." -ForegroundColor Green            
-            # Download the ZIP file
-            $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
-            Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
-            # Extract the ZIP file
-            Write-CurrentTime; Write-Host "Extracting archive to $corePath..."
-            try {
-                Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
-                # Remove the ZIP file after extraction
-                #Write-CurrentTime; Write-Host "Removing downloaded archive..."
-                #Remove-Item $zipFilePath
-            }
-            catch [System.UnauthorizedAccessException] {
-                Write-CurrentTime; Write-Host "The script does not have sufficient rights to access the $core directory..." -ForegroundColor Red
-                Write-CurrentTime; Write-Host "Please restart the script in administrator mode..." -ForegroundColor Green
-                pause
-                exit
-            }
-            catch {
-                # In case of an error other than permissions, display the error message
-                Write-CurrentTime; Write-Host "An error occurred while extracting the archive: $_. But we continue..." -ForegroundColor Yellow
-            }
+    $answer = Read-Host " Your version differ from the latest available.`n Do you want to update RaptoreumCore to version $($latestVersion) ? (y/n)"
+    if ($answer.ToLower() -eq "y") {
+        $downloadUrl = "https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
+        Write-CurrentTime; Write-Host "Downloading RaptoreumCore version $latestVersion..." -ForegroundColor Green            
+        # Download the ZIP file
+        $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
+        Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
+        # Extract the ZIP file
+        Write-CurrentTime; Write-Host "Extracting archive to $corePath..."
+        try {
+            Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
+            # Remove the ZIP file after extraction
+            #Write-CurrentTime; Write-Host "Removing downloaded archive..."
+            #Remove-Item $zipFilePath
+        }
+        catch [System.UnauthorizedAccessException] {
+            Write-CurrentTime; Write-Host "The script does not have sufficient rights to access the $core directory..." -ForegroundColor Red
+            Write-CurrentTime; Write-Host "Please restart the script in administrator mode..." -ForegroundColor Green
+            pause
+            exit
+        }
+        catch {
+            # In case of an error other than permissions, display the error message
+            Write-CurrentTime; Write-Host "An error occurred while extracting the archive: $_. But we continue..." -ForegroundColor Yellow
         }
     }
     else {
