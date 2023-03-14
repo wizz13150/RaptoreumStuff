@@ -264,6 +264,11 @@ $walletProcess = Get-Process -Name $walletProcessName -ErrorAction SilentlyConti
 if ($walletProcess) {
     Write-CurrentTime; Write-Host " Arrêt du processus RaptoreumCore en cours..." -ForegroundColor Yellow
     Stop-Process $walletProcess.Id -Force
+    do {
+        Start-Sleep -Milliseconds 500
+        $walletProcess = Get-Process -Name $walletProcessName -ErrorAction SilentlyContinue
+    } while ($walletProcess)
+    Write-CurrentTime; Write-Host " Le processus RaptoreumCore a été stoppé..." -ForegroundColor Green
 } else {
     Write-CurrentTime; Write-Host " Aucun processus RaptoreumCore détecté..." -ForegroundColor Green
 }
