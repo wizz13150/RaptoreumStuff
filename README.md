@@ -8,7 +8,9 @@ Available in English, in French, and in Spanish:
 
 https://github.com/wizz13150/RaptoreumStuff/releases/tag/RTMBootstrap
 
-Just run and answer the questions if you're using custom folders.
+Just run the .bat and answer the questions if you're using custom folders.
+
+*Need to run the .bat as admin if you have to update your RaptoreumCore Wallet.
 
 -----------------------------------
 
