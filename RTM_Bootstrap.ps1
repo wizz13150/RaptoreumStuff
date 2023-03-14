@@ -301,7 +301,7 @@ if (Test-Path $bootstrapZipPath) {
     Write-CurrentTime; Write-Host " Extracting bootstrap from: $bootstrapZipPath..." -ForegroundColor Green
     Write-CurrentTime; Write-Host " Extracting bootstrap to  : $walletDirectory..." -ForegroundColor Green
     $zipProgram = $null
-        $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
+    $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
     if (Test-Path $7zipKey) {
         $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
     }
