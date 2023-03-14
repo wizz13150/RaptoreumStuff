@@ -207,15 +207,11 @@ if (-not ($coreVersion -eq $latestVersion)) {
             #Write-CurrentTime; Write-Host " Suppression de l'archive téléchargée..."
             #Remove-Item $zipFilePath
         }
-        catch [System.UnauthorizedAccessException] {
+        catch {
             Write-CurrentTime; Write-Host " Le script n'a pas les droits nécessaires pour accéder au dossier $core..." -ForegroundColor Red
             Write-CurrentTime; Write-Host " Veuillez relancer le script en mode administrateur..." -ForegroundColor Green
             pause
             exit
-        }
-        catch {
-            # En cas d'erreur autre que les autorisations, afficher le message d'erreur
-            Write-CurrentTime; Write-Host " Une erreur s'est produite lors de la décompression de l'archive : $_. Mais on continue..." -ForegroundColor Yellow
         }
     }
     else {
