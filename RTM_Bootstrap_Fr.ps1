@@ -54,7 +54,6 @@ function Check-BootstrapZipChecksum {
 # Fonction pour obtenir la version de raptoreum-qt.exe
 function Get-FileVersion {
     param (
-        [Parameter(Mandatory=$true)]
         [string]$FilePath
     )
     $fileVersionInfo = Get-Item $FilePath -ErrorAction SilentlyContinue | Get-ItemProperty | Select-Object -ExpandProperty VersionInfo
@@ -98,9 +97,7 @@ function Check-BootstrapZip {
 # Fonction pour télécharger le fichier avec suivi de progression
 function Download-FileWithProgress {
     param(
-        [Parameter(Mandatory=$true)]
         [string]$Url,
-        [Parameter(Mandatory=$true)]
         [string]$FilePath
     )    
     Write-CurrentTime; Write-Host " Téléchargement du fichier à partir de $Url" -ForegroundColor Green    
@@ -299,11 +296,9 @@ if (Test-Path $bootstrapZipPath) {
     Write-CurrentTime; Write-Host " Extraction du bootstrap à partir de : $bootstrapZipPath..." -ForegroundColor Green
     Write-CurrentTime; Write-Host " Extraction du bootstrap vers        : $walletDirectory..." -ForegroundColor Green
     $zipProgram = $null
-    if (Test-Path (Join-Path $env:ProgramFiles "7-zip\7z.exe")) {
-        $zipProgram = (Join-Path $env:ProgramFiles "7-zip\7z.exe")
-    }
-    if (Test-Path (Join-Path ${Env:ProgramFiles(x86)} "7-Zip\7z.exe")) {
-        $zipProgram = (Join-Path ${Env:ProgramFiles(x86)} "7-zip\7z.exe")
+    $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
+    if (Test-Path $7zipKey) {
+        $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
     }
     if ($zipProgram) {
         Write-CurrentTime; Write-Host " 7-Zip détecté, utilisation de 7-Zip pour extraire le bootstrap. Plus rapide..." -ForegroundColor Green
