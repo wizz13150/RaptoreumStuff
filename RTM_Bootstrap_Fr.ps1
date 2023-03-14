@@ -229,6 +229,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
             # Supprimer le fichier ZIP après la décompression
             #Write-CurrentTime; Write-Host " Suppression de l'archive téléchargée..."
             #Remove-Item $zipFilePath
+            Write-CurrentTime; Write-Host " RaptoreumCore $latestVersion a été installé..." -ForegroundColor Green
         }
         catch {
             Write-CurrentTime; Write-Host " Le script n'a pas les droits nécessaires pour accéder au dossier $core..." -ForegroundColor Red
