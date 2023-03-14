@@ -190,6 +190,29 @@ $bootstrapVersion = [regex]::Matches($checksums, '\d+\.\d+\.\d+\.\d+').Value | S
 Write-CurrentTime; Write-Host " Dernière version de Bootstrap disponible     : $bootstrapVersion" -ForegroundColor Green
 Write-CurrentTime; Write-Host " Lien de téléchargement : https://bootstrap.raptoreum.com/bootstraps/bootstrap.zip" -ForegroundColor Green
 
+# Demande si l'emplacement par défaut du portefeuille est utilisé
+$customPath = Read-Host " Votre portefeuille RaptoreumCore utilise-t-il l'emplacement par défaut ?`n (Appuyez sur Entrée si vous ne savez pas) (o/n)"
+if ($customPath.ToLower() -eq "n") {
+    # Demande un répertoire personnalisé, si raptoreum-qt.exe n'est pas trouvé dans l'emplacement par défaut
+    $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
+    $customDialog.Description = "Sélectionnez le chemin de votre dossier de portefeuille RaptoreumCore personnalisé"
+    $customDialog.ShowDialog() | Out-Null
+    if ($customDialog.SelectedPath) {
+        # Change les variables de l'emplacement par défaut au répertoire de portefeuille personnalisé
+        [string]$walletDirectory = $customDialog.SelectedPath
+        [string]$bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
+        [string]$blocksDirectory = "$($customDialog.SelectedPath)\blocks"
+        [string]$chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
+        [string]$evodbDirectory = "$($customDialog.SelectedPath)\evodb"
+        [string]$llmqDirectory = "$($customDialog.SelectedPath)\llmq"
+        [string]$powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
+        Write-CurrentTime; Write-Host " Votre dossier de portefeuille personnalisé est : '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
+        Write-CurrentTime; Write-Host " Utilisation de ce répertoire pour le fichier bootstrap.zip..." -ForegroundColor Green
+    } else {
+        Write-CurrentTime; Write-Host " Emplacement personnalisé du portefeuille non trouvé, on poursuite avec l'emplacement par défaut..." -ForegroundColor Yellow
+    }
+}
+
 # Demander si le portefeuille est correctement mis à jour vers la version requise
 if (-not ($coreVersion -eq $latestVersion)) {
     $answer = Read-Host " Votre version diffère de la dernière version disponible.`n Voulez-vous mettre à jour RaptoreumCore vers la version $($latestVersion) ? (o/n)"
@@ -220,29 +243,6 @@ if (-not ($coreVersion -eq $latestVersion)) {
             Write-CurrentTime; Write-Host " La version semble être incorrecte, on continue mais vous risquez de rencontrer une erreur au lancement." -ForegroundColor Yellow
             Write-CurrentTime; Write-Host " Lien de téléchargement : https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
         }
-    }
-}
-
-# Demande si l'emplacement par défaut du portefeuille est utilisé
-$customPath = Read-Host " Votre portefeuille RaptoreumCore utilise-t-il l'emplacement par défaut ?`n (Appuyez sur Entrée si vous ne savez pas) (o/n)"
-if ($customPath.ToLower() -eq "n") {
-    # Demande un répertoire personnalisé, si raptoreum-qt.exe n'est pas trouvé dans l'emplacement par défaut
-    $customDialog = New-Object System.Windows.Forms.FolderBrowserDialog
-    $customDialog.Description = "Sélectionnez le chemin de votre dossier de portefeuille RaptoreumCore personnalisé"
-    $customDialog.ShowDialog() | Out-Null
-    if ($customDialog.SelectedPath) {
-        # Change les variables de l'emplacement par défaut au répertoire de portefeuille personnalisé
-        [string]$walletDirectory = $customDialog.SelectedPath
-        [string]$bootstrapZipPath = "$($customDialog.SelectedPath)\bootstrap.zip"
-        [string]$blocksDirectory = "$($customDialog.SelectedPath)\blocks"
-        [string]$chainstateDirectory = "$($customDialog.SelectedPath)\chainstate"
-        [string]$evodbDirectory = "$($customDialog.SelectedPath)\evodb"
-        [string]$llmqDirectory = "$($customDialog.SelectedPath)\llmq"
-        [string]$powcachePath = "$($customDialog.SelectedPath)\powcache.dat"
-        Write-CurrentTime; Write-Host " Votre dossier de portefeuille personnalisé est : '$($customDialog.SelectedPath)' ..." -ForegroundColor Green
-        Write-CurrentTime; Write-Host " Utilisation de ce répertoire pour le fichier bootstrap.zip..." -ForegroundColor Green
-    } else {
-        Write-CurrentTime; Write-Host " Emplacement personnalisé du portefeuille non trouvé, on poursuite avec l'emplacement par défaut..." -ForegroundColor Yellow
     }
 }
 
