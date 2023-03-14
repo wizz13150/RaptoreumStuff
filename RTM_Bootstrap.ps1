@@ -194,7 +194,7 @@ Write-CurrentTime; Write-Host " Download link: https://bootstrap.raptoreum.com/b
 if (-not ($coreVersion -eq $latestVersion)) {
     $answer = Read-Host " Your version differ from the latest available.`n Do you want to update RaptoreumCore to version $($latestVersion) ? (y/n)"
     if ($answer.ToLower() -eq "y") {
-        $downloadUrl = " https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
+        $downloadUrl = "https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
         Write-CurrentTime; Write-Host " Downloading RaptoreumCore version $latestVersion..." -ForegroundColor Green            
         # Download the ZIP file
         $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
