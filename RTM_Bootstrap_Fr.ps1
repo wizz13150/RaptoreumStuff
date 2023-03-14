@@ -95,7 +95,7 @@ function Check-BootstrapZip {
     }
 }
 
-# Fonction pour télécharger le bootstrap avec suivi de progression
+# Fonction pour télécharger le fichier avec suivi de progression
 function Download-FileWithProgress {
     param(
         [Parameter(Mandatory=$true)]
@@ -103,24 +103,24 @@ function Download-FileWithProgress {
         [Parameter(Mandatory=$true)]
         [string]$FilePath
     )    
-    Write-CurrentTime; Write-Host " Téléchargement du bootstrap à partir de $Url" -ForegroundColor Green    
+    Write-CurrentTime; Write-Host " Téléchargement du fichier à partir de $Url" -ForegroundColor Green    
     # Vérifier si le répertoire de destination existe
     if (!(Test-Path $walletDirectory)) {
         Write-CurrentTime; Write-Host " Le répertoire $walletDirectory n'existe pas..." -ForegroundColor Red
         Write-CurrentTime; Write-Host " Veuillez redémarrer le script et sélectionner un emplacement correct pour le portefeuille..." -ForegroundColor Green
         pause
         exit
-    }    
+    }
     try {
         # Créer un travail de transfert BITS
-        $bitsJob = Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Téléchargement du bootstrap à partir de $Url"
+        Start-BitsTransfer -Source $Url -Destination $FilePath -DisplayName "Téléchargement du fichier à partir de $Url"        
     }
     catch {
-        Write-CurrentTime; Write-Host " Une erreur s'est produite lors du téléchargement du bootstrap : $_. Veuillez réessayer ultérieurement." -ForegroundColor Red
+        Write-CurrentTime; Write-Host " Une erreur s'est produite lors du téléchargement du fichier : $_. Veuillez réessayer ultérieurement." -ForegroundColor Red
         pause
         exit
     }
-    Write-CurrentTime; Write-Host " Le bootstrap a été téléchargé à $FilePath" -ForegroundColor Green
+    Write-CurrentTime; Write-Host " Le fichier a été téléchargé vers $FilePath" -ForegroundColor Green
 }
 
 # Fonction pour obtenir la taille du bootstrap en ligne
@@ -135,6 +135,7 @@ function Get-BootstrapSize {
 # Vérification des versions actuelle et disponible
 # Vérifie la version actuelle sur l'ordinateur, si dans le dossier par défaut
 $corePath = "$env:ProgramFiles\RaptoreumCore\raptoreum-qt.exe"
+$core = "$env:ProgramFiles\RaptoreumCore"
 if (Test-Path $corePath) {
     $coreVersion = Get-FileVersion $corePath
     Write-CurrentTime; Write-Host " Votre version de RaptoreumCore est           : $coreVersion" -ForegroundColor Green
@@ -150,6 +151,7 @@ else {
         $dialog.ShowDialog() | Out-Null
         if ($dialog.SelectedPath) {
             $corePath = $dialog.SelectedPath + "\raptoreum-qt.exe"
+            $core = $dialog.SelectedPath
             $coreVersion = Get-FileVersion $corePath
             # Vérifier si le dossier sélectionné contient raptoreum-qt.exe
             if (Test-Path "$corePath") {
@@ -186,10 +188,33 @@ Write-CurrentTime; Write-Host " Lien de téléchargement : https://bootstrap.rap
 if (-not ($coreVersion -eq $latestVersion)) {
     $answer = Read-Host " Votre version diffère de la dernière version disponible.`n Avez-vous mis à jour RaptoreumCore vers la version $($latestVersion) ? (o/n)"
     if ($answer.ToLower() -ne "o") {
-        Write-CurrentTime; Write-Host " Veuillez mettre à jour RaptoreumCore vers la version $latestVersion et exécuter le script à nouveau." -ForegroundColor Red
-        Write-CurrentTime; Write-Host " Lien de téléchargement : https://github.com/Raptor3um/raptoreum/releases/tag/$latestVersion" -ForegroundColor Green
-        pause
-        exit
+        # Demander si il faut télécharger et installer la dernière version de RaptoreumCore disponible
+        $dlanswer = Read-Host " Voulez-vous mettre à jour RaptoreumCore vers la version $($latestVersion) ? (o/n)"
+        if ($dlanswer.ToLower() -eq "o") {
+            $downloadUrl = "https://github.com/Raptor3um/raptoreum/releases/download/$latestVersion/raptoreum-win-$latestVersion.zip"
+            Write-CurrentTime; Write-Host " Téléchargement de la version $latestVersion de RaptoreumCore..." -ForegroundColor Green            
+            # Télécharger le fichier ZIP
+            $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
+            Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
+            # Décompresser le fichier ZIP
+            Write-CurrentTime; Write-Host " Décompresion de l'archive vers $corePath..."
+            try {
+                Expand-Archive -Path $downloadZipPath -DestinationPath $corePath -ErrorAction Stop
+                # Supprimer le fichier ZIP après la décompression
+                #Write-CurrentTime; Write-Host " Suppression de l'archive téléchargée..."
+                #Remove-Item $zipFilePath
+            }
+            catch [System.UnauthorizedAccessException] {
+                Write-CurrentTime; Write-Host " Le script n'a pas les droits nécessaires pour accéder au dossier $core..." -ForegroundColor Red
+                Write-CurrentTime; Write-Host " Veuillez relancer le script en mode administrateur..." -ForegroundColor Green
+                pause
+                exit
+            }
+            catch {
+                # En cas d'erreur autre que les autorisations, afficher le message d'erreur
+                Write-CurrentTime; Write-Host " Une erreur s'est produite lors de la décompression de l'archive : $_. Mais on continue..." -ForegroundColor Yellow
+            }
+        }
     }
     else {
         # Vérifie une dernière fois la version, invite à mettre à jour avec un lien
