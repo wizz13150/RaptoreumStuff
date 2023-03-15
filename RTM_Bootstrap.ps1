@@ -220,7 +220,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
         $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
         Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
         # Extract the ZIP file
-        Write-CurrentTime; Write-Host " Extracting archive to $corePath..."
+        Write-CurrentTime; Write-Host " Extracting archive to $core..."
         try {
             Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
             # Remove the ZIP file after extraction
