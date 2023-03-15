@@ -129,6 +129,27 @@ function Get-BootstrapSize {
     Write-CurrentTime; Write-Host " Online Bootstrap size: $sizeInBytes bytes ($sizeInGB GB)" -ForegroundColor Green
 }
 
+function Extract-Bootstrap {
+    param (
+        [string]$bootstrapZipPath,
+        [string]$walletDirectory
+    )
+    Write-CurrentTime; Write-Host " Extracting bootstrap from: $bootstrapZipPath..." -ForegroundColor Green
+    Write-CurrentTime; Write-Host " Extracting bootstrap to  : $walletDirectory..." -ForegroundColor Green
+    $zipProgram = $null
+    $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
+    if (Test-Path $7zipKey) {
+        $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
+    }
+    if ($zipProgram) {
+        Write-CurrentTime; Write-Host " 7-Zip detected, using 7-Zip to extract the bootstrap. Faster..." -ForegroundColor Green
+        & "$zipProgram" x "$bootstrapZipPath" -o"$walletDirectory" -y
+    } else {
+        Write-CurrentTime; Write-Host " 7-Zip not detected, using 'Expand-Archive' to extract the bootstrap. Slower..." -ForegroundColor Green
+        Expand-Archive -Path $bootstrapZipPath -DestinationPath $walletDirectory -Force -ErrorAction Stop
+    }
+}
+
 # Checking the current and the latest versions available
 
 # Get latest version number of RaptoreumCore available, from github
@@ -298,20 +319,7 @@ if (Test-Path $powcachePath) {
 
 # Download (again) and extract the bootstrap if necessary. Detect if 7-Zip is installed to use it, faster.
 if (Test-Path $bootstrapZipPath) {
-    Write-CurrentTime; Write-Host " Extracting bootstrap from: $bootstrapZipPath..." -ForegroundColor Green
-    Write-CurrentTime; Write-Host " Extracting bootstrap to  : $walletDirectory..." -ForegroundColor Green
-    $zipProgram = $null
-    $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
-    if (Test-Path $7zipKey) {
-        $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
-    }
-    if ($zipProgram) {
-        Write-CurrentTime; Write-Host " 7-Zip detected, using 7-Zip to extract the bootstrap. Faster..." -ForegroundColor Green
-        & "$zipProgram" x "$bootstrapZipPath" -o"$walletDirectory" -y
-    } else {
-        Write-CurrentTime; Write-Host " 7-Zip not detected, using 'Expand-Archive' to extract the bootstrap. Slower..." -ForegroundColor Green
-        Expand-Archive -Path $bootstrapZipPath -DestinationPath $walletDirectory -Force -ErrorAction Stop
-    }
+    Extract-Bootstrap -bootstrapZipPath $bootstrapZipPath -walletDirectory $walletDirectory
 } else {
     Write-CurrentTime; Write-Host " No 'bootstrap.zip' file detected in the wallet directory." -ForegroundColor Yellow
     Do {
@@ -320,23 +328,7 @@ if (Test-Path $bootstrapZipPath) {
     } Until ($confirmDownload.ToLower() -eq "y")
     Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
     Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
-    # Extraction
-    if (Test-Path $bootstrapZipPath) {
-        Write-CurrentTime; Write-Host " Extracting bootstrap from: $bootstrapZipPath..." -ForegroundColor Green
-        Write-CurrentTime; Write-Host " Extracting bootstrap to  : $walletDirectory..." -ForegroundColor Green
-        $zipProgram = $null
-        $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
-        if (Test-Path $7zipKey) {
-            $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
-        }
-        if ($zipProgram) {
-            Write-CurrentTime; Write-Host " 7-Zip detected, using 7-Zip to extract the bootstrap. Faster..." -ForegroundColor Green
-            & "$zipProgram" x "$bootstrapZipPath" -o"$walletDirectory" -y
-        } else {
-            Write-CurrentTime; Write-Host " 7-Zip not detected, using 'Expand-Archive' to extract the bootstrap. Slower..." -ForegroundColor Green
-            Expand-Archive -Path $bootstrapZipPath -DestinationPath $walletDirectory -Force -ErrorAction Stop
-        }
-    }
+    Extract-Bootstrap -bootstrapZipPath $bootstrapZipPath -walletDirectory $walletDirectory
 }
 
 # Display a completion message
