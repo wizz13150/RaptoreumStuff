@@ -320,6 +320,23 @@ if (Test-Path $bootstrapZipPath) {
     } Until ($confirmDownload.ToLower() -eq "y")
     Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
     Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
+    # Extraction
+    if (Test-Path $bootstrapZipPath) {
+        Write-CurrentTime; Write-Host " Extracting bootstrap from: $bootstrapZipPath..." -ForegroundColor Green
+        Write-CurrentTime; Write-Host " Extracting bootstrap to  : $walletDirectory..." -ForegroundColor Green
+        $zipProgram = $null
+        $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
+        if (Test-Path $7zipKey) {
+            $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
+        }
+        if ($zipProgram) {
+            Write-CurrentTime; Write-Host " 7-Zip detected, using 7-Zip to extract the bootstrap. Faster..." -ForegroundColor Green
+            & "$zipProgram" x "$bootstrapZipPath" -o"$walletDirectory" -y
+        } else {
+            Write-CurrentTime; Write-Host " 7-Zip not detected, using 'Expand-Archive' to extract the bootstrap. Slower..." -ForegroundColor Green
+            Expand-Archive -Path $bootstrapZipPath -DestinationPath $walletDirectory -Force -ErrorAction Stop
+        }
+    }
 }
 
 # Display a completion message
