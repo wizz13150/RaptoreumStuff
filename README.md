@@ -10,7 +10,7 @@ https://github.com/wizz13150/RaptoreumStuff/releases/tag/RTMBootstrap
 
 Just run the .bat and answer the questions if you're using custom folders.
 
-*Need to run the .bat as admin if you have to update your RaptoreumCore Wallet.
+*Need to run the .bat as admin if you want to update your RaptoreumCore Wallet.
 
 -----------------------------------
 
