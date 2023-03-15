@@ -220,7 +220,7 @@ if (-not ($coreVersion -eq $latestVersion)) {
         $downloadZipPath = "$walletDirectory\raptoreum-win-$latestVersion.zip"
         Download-FileWithProgress -Url $downloadUrl -FilePath $downloadZipPath
         # Descomprimir el archivo ZIP
-        Write-CurrentTime; Write-Host " Descomprimiendo el archivo en $corePath..."
+        Write-CurrentTime; Write-Host " Descomprimiendo el archivo en $core..."
         try {
             Expand-Archive -Path $downloadZipPath -DestinationPath $core -Force -ErrorAction Stop
             # Eliminar el archivo ZIP después de la descompresión
