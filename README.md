@@ -24,7 +24,7 @@ What the script does :
 
 -Detect your Raptoreum Core version, or ask for a custom folder.
 
--If you are not up to date, will ask if you want to update Raptoreum Core to the latest version available.
+-If you are not up to date, will ask if you want to update Raptoreum Core (raptoreum-qt.exe) to the latest version available.
 
 -Use the default wallet location, or ask for a custom folder.
 
