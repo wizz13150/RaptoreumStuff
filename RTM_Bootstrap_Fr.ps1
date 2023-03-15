@@ -129,6 +129,27 @@ function Get-BootstrapSize {
     Write-CurrentTime; Write-Host " Taille du bootstrap en ligne : $sizeInBytes octets ($sizeInGB Go)" -ForegroundColor Green
 }
 
+function Extract-Bootstrap {
+    param (
+        [string]$bootstrapZipPath,
+        [string]$walletDirectory
+    )
+    Write-CurrentTime; Write-Host " Extraction du bootstrap à partir de : $bootstrapZipPath..." -ForegroundColor Green
+    Write-CurrentTime; Write-Host " Extraction du bootstrap vers        : $walletDirectory..." -ForegroundColor Green
+    $zipProgram = $null
+    $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
+    if (Test-Path $7zipKey) {
+        $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
+    }
+    if ($zipProgram) {
+        Write-CurrentTime; Write-Host " 7-Zip détecté, utilisation de 7-Zip pour extraire le bootstrap. Plus rapide..." -ForegroundColor Green
+        & "$zipProgram" x "$bootstrapZipPath" -o"$walletDirectory" -y
+    } else {
+        Write-CurrentTime; Write-Host " 7-Zip non détecté, utilisation de 'Expand-Archive' pour extraire le bootstrap. Plus lent..." -ForegroundColor Green
+        Expand-Archive -Path $bootstrapZipPath -DestinationPath $walletDirectory -Force -ErrorAction Stop
+    }
+}
+
 # Vérification des versions actuelle et disponible
 
 # Obtenir le numéro de la version la plus récente de RaptoreumCore disponible, depuis github
@@ -298,20 +319,7 @@ if (Test-Path $powcachePath) {
 
 # Télécharger (à nouveau) et extraire le bootstrap si nécessaire. Détecter si 7-Zip est installé pour l'utiliser, plus rapide.
 if (Test-Path $bootstrapZipPath) {
-    Write-CurrentTime; Write-Host " Extraction du bootstrap à partir de : $bootstrapZipPath..." -ForegroundColor Green
-    Write-CurrentTime; Write-Host " Extraction du bootstrap vers        : $walletDirectory..." -ForegroundColor Green
-    $zipProgram = $null
-    $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
-    if (Test-Path $7zipKey) {
-        $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
-    }
-    if ($zipProgram) {
-        Write-CurrentTime; Write-Host " 7-Zip détecté, utilisation de 7-Zip pour extraire le bootstrap. Plus rapide..." -ForegroundColor Green
-        & "$zipProgram" x "$bootstrapZipPath" -o"$walletDirectory" -y
-    } else {
-        Write-CurrentTime; Write-Host " 7-Zip non détecté, utilisation de 'Expand-Archive' pour extraire le bootstrap. Plus lent..." -ForegroundColor Green
-        Expand-Archive -Path $bootstrapZipPath -DestinationPath $walletDirectory -Force -ErrorAction Stop
-    }
+    Extract-Bootstrap -bootstrapZipPath $bootstrapZipPath -walletDirectory $walletDirectory
 } else {
     Write-CurrentTime; Write-Host " Aucun fichier 'bootstrap.zip' détecté dans le répertoire du portefeuille." -ForegroundColor Yellow
     Do {
@@ -320,22 +328,7 @@ if (Test-Path $bootstrapZipPath) {
     } Until ($confirmDownload.ToLower() -eq "o")
     Download-FileWithProgress -Url $bootstrapUrl -FilePath $bootstrapZipPath
     Check-BootstrapZip -bootstrapZipPath $bootstrapZipPath -bootstrapUrl $bootstrapUrl
-    if (Test-Path $bootstrapZipPath) {
-        Write-CurrentTime; Write-Host " Extraction du bootstrap à partir de : $bootstrapZipPath..." -ForegroundColor Green
-        Write-CurrentTime; Write-Host " Extraction du bootstrap vers        : $walletDirectory..." -ForegroundColor Green
-        $zipProgram = $null
-        $7zipKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\7zFM.exe"
-        if (Test-Path $7zipKey) {
-            $zipProgram = (Get-ItemProperty $7zipKey).'Path' + "7z.exe"
-        }
-        if ($zipProgram) {
-            Write-CurrentTime; Write-Host " 7-Zip détecté, utilisation de 7-Zip pour extraire le bootstrap. Plus rapide..." -ForegroundColor Green
-            & "$zipProgram" x "$bootstrapZipPath" -o"$walletDirectory" -y
-        } else {
-            Write-CurrentTime; Write-Host " 7-Zip non détecté, utilisation de 'Expand-Archive' pour extraire le bootstrap. Plus lent..." -ForegroundColor Green
-            Expand-Archive -Path $bootstrapZipPath -DestinationPath $walletDirectory -Force -ErrorAction Stop
-        }
-    }
+    Extract-Bootstrap -bootstrapZipPath $bootstrapZipPath -walletDirectory $walletDirectory
 }
 
 # Afficher un message de fin
