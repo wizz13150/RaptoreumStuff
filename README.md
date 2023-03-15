@@ -2,7 +2,7 @@ NOT OFFICIAL, NOT RELATED TO THE RAPTOREUM CORE TEAM
 
 -----------------------------------
 
-Powershell script to apply a Bootstrap to the RaptoreumCore Wallet, on Windows 10.
+Powershell script to apply a Bootstrap to the Raptoreum Core Wallet and update to the latest version, on Windows 10.
 
 Available in English, in French, and in Spanish:
 
@@ -10,7 +10,7 @@ https://github.com/wizz13150/RaptoreumStuff/releases/tag/RTMBootstrap
 
 Just run the .bat and answer the questions if you're using custom folders.
 
-*Need to run the .bat as admin if you want to update your RaptoreumCore Wallet.
+*Need to run the .bat as admin if you want to update your Raptoreum Core Wallet.
 
 -----------------------------------
 
@@ -18,17 +18,21 @@ If it's a fresh installation, be sure to launch Raptoreum Core once, before runn
 
 -----------------------------------
 
-Check the latest versions of RaptoreumCore on github, the latest bootstrap on bootstrap.raptoreum.com, with links to download.
+What the script does :
 
-Will apply the last bootstrap (no index) available to your wallet, be sure to run the last RaptoreumCore release version. 
+-Check the latest versions of Raptoreum Core on github, the latest bootstrap on bootstrap.raptoreum.com, with links to download.
 
-Use the default wallet location, or ask for a custom folder.
+-Detect your Raptoreum Core version, or ask for a custom folder.
 
-Detect if 7-Zip is on the computer, +30% faster for the extraction.
+-If you are not up to date, will ask if you want to update Raptoreum Core to the latest version available.
 
-Detect your RaptoreumCore version, or ask for a custom folder.
+-Use the default wallet location, or ask for a custom folder.
 
-If you want to use your local (up to date) bootstrap.zip, put it in your wallet folder.
+-Detect if 7-Zip is on the computer, +30% faster for the extraction.
+
+-Download, proceed to a checksum verification and apply the last bootstrap (no index) available to your wallet. 
+
+*If you want to use your local (up to date) bootstrap.zip, put it in your wallet folder.
 
 Take 10 min to complete, for me. (03/23)
 
