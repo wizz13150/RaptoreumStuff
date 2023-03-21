@@ -12,7 +12,7 @@ $walletDirectory = "$env:APPDATA\raptoreumcore"
 $bootstrapZipPath = "$env:APPDATA\raptoreumcore\bootstrap.zip"
 
 # Otras variables fijas
-$walletProcessName = "raptoreum*"
+$walletProcessName = "raptoreum-qt.exe"
 $dateSuffix = Get-Date -Format "ddMMyyyy"
 $bootstrapUrl = "https://bootstrap.raptoreum.com/bootstraps/bootstrap.zip"
 $blocksDirectory = "$walletDirectory\blocks"
